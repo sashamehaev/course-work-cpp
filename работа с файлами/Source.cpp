@@ -1,0 +1,296 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#define FNAME_STUDENTS "./students.dat"
+#define FNAME_BOOKS "./books.dat"
+const char PR_R[] = "rb";	//признак открытия бинарного файла на чтение
+const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
+const char PR_W[] = "wb";	//признак открытия файла на запись
+const char PR_A[] = "ab";	//признак открытия файла на добавление
+using namespace std;
+
+void AddBook(const char* fileName);
+void AddStudent(const char* fileName);
+void ShowStudents(const char* fileName);
+void ShowBooks(const char* fileName);
+
+typedef struct {
+	int id;
+	char name[255];
+	char surname[255];
+
+} students;
+
+typedef struct {
+	int id;
+	char name[255];
+
+} books;
+
+int main() {
+	setlocale(LC_ALL, "ru");
+	char filenameStudents[40] = FNAME_STUDENTS;
+	char filenameBooks[40] = FNAME_BOOKS;
+	
+	int var = 0;
+
+	for (; ;) {
+		printf("  1 - Создание базы данных\n");
+		printf("  2 - Записать в базу данных \n");
+		printf("  3 - Просмотр базы данных \n");
+		printf("  4 - Выдать книгу студенту \n");
+		printf("  5 - Забрать книгу у студента \n");
+		printf("  8 - Выход из программы\n");
+
+		scanf("%i", &var);
+		switch (var) {
+			case 1:
+				char res;
+
+				//Создаем файлы
+				if (fopen(filenameStudents, PR_R)) {
+					printf(" Файл со студентами ");
+					printf(filenameStudents);
+					printf(" был создан раньше.\n");
+					printf(" Создаём файл с новым именем? [Y/N] ");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
+						printf(" Задайте имя создаваемого файла: ");
+						scanf("%s", filenameStudents);
+					}
+				}
+
+				if (!fopen(filenameStudents, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
+
+				if (fopen(filenameBooks, PR_R)) {
+					printf(" Файл с книгами ");
+					printf(filenameBooks);
+					printf(" был создан раньше.\n");
+					printf(" Создаём файл с новым именем? [Y/N] ");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
+						printf(" Задайте имя создаваемого файла: ");
+						scanf("%s", filenameBooks);
+					}
+				}
+
+				if (!fopen(filenameBooks, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
+		
+				break;
+
+			case 2:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					int var = 0;
+					printf("\n    Выберите таблицу: \n");
+					printf("  1 - Студенты \n");
+					printf("  2 - Книги \n");
+					printf("  3 - Вернуться назад \n");
+					printf("  Введите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						AddStudent(filenameStudents);
+						break;
+					}
+					else if (var == 2) {
+						AddBook(filenameBooks);
+						break;
+					}
+					else if (var == 3) {
+						break;
+					}
+					else break;
+
+					break;
+				}
+				printf("\n Ошибка открытия файла для чтения и записи\n");
+				break;
+			case 3:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					int var = 0;
+					printf("\n    Выберите таблицу: \n");
+					printf("  1 - Студенты \n");
+					printf("  2 - Книги \n");
+					printf("  3 - Вернуться назад \n");
+					printf("  Введите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						ShowStudents(filenameStudents);
+						break;
+					}
+					else if (var == 2) {
+						ShowBooks(filenameBooks);
+						break;
+					}
+					else if (var == 3) {
+						break;
+					}
+					else break;
+						
+					break;
+				}
+				printf("\n Ошибка открытия файла для чтения и записи\n");
+				break;
+			/*case 4:
+				if (!fopen(filenameStudents, PR_R)) {
+					printf("\n Ошибка открытия файла для чтения\n");
+					break;
+				}
+				if (!fopen(filenameResult, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
+			case 5:
+				if (!fopen(filenameResult, PR_R)) {
+					printf("\n Ошибка открытия файла для чтения\n");
+					break;
+				}*/
+
+			case 8: return 0;
+
+			default:
+				break;
+		}
+	}
+}
+
+void ShowStudents(const char* fileName) {
+	int i = 0;
+	FILE* filenameStudents;
+	filenameStudents = fopen(fileName, PR_R);
+	students student;
+
+	while (fread(&student, sizeof(student), 1, filenameStudents) > 0) {
+		printf("\n|%15s|%15s|%15d|", student.surname, student.name, student.id);
+	}
+	printf("\n");
+	for (i = 1; i <= 49; i++)
+		printf("-");
+	printf("\n");
+	fclose(filenameStudents);
+	return;
+}
+
+void ShowBooks(const char* fileName) {
+	int i = 0;
+	FILE* filenameBooks;
+	filenameBooks = fopen(fileName, PR_R);
+	books book;
+
+	while (fread(&book, sizeof(book), 1, filenameBooks) > 0) {
+		printf("\n|%15s|%15d|", book.name, book.id);
+	}
+	printf("\n");
+	for (i = 1; i <= 33; i++)
+		printf("-");
+	printf("\n");
+	fclose(filenameBooks);
+	return;
+}
+
+void AddStudent(const char* fileName) {
+	int i = 0;
+	FILE* writeData;
+	FILE* readData;
+	char res;
+	students student;
+	int studentId = 0;
+	
+	do {
+		//Открыть файл на чтение
+		readData = fopen(fileName, PR_R);
+
+		//пройтись циклом в файле, чтобы найти id последнего объекта
+		while (fread(&student, sizeof(student), 1, readData) > 0) { 
+			cout << "зашли в цикл" << endl;
+			studentId = student.id;
+			studentId++;
+		}
+
+		//Случай, если файл пустой
+		if (studentId == 0) { 
+			cout << "зашли не туда" << endl;
+			studentId++;
+			student.id = studentId;
+		}
+		//Закрываем файл на чтение
+		fclose(readData); 
+
+		//записываем id, найденный в файле, в создаваемый обЪект
+		student.id = studentId; 
+		
+		printf("\n Имя? ");
+		scanf("%s", student.name);  
+
+		printf("\n Фамилия? ");
+		scanf("%s", student.surname); 
+
+		//Открываем файл на запись
+		writeData = fopen(fileName, PR_A);
+
+		//записываем в файл созданный объект
+		fwrite(&student, sizeof(student), 1, writeData); 
+		fclose(writeData);
+
+		printf("\n Продолжать?[Y/N]");
+		while ((res = getchar()) == '\n');
+	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
+	printf("\n");
+
+	return;
+}
+
+void AddBook(const char* fileName) {
+	int i = 0;
+	FILE* writeData;
+	FILE* readData;
+	char res;
+	books book;
+	int bookId = 0;
+
+	do {
+		//Открыть файл на чтение
+		readData = fopen(fileName, PR_R);
+
+		//пройтись циклом в файле, чтобы найти id последнего объекта
+		while (fread(&book, sizeof(book), 1, readData) > 0) {
+			cout << "зашли в цикл" << endl;
+			bookId = book.id;
+			bookId++;
+		}
+
+		//Случай, если файл пустой
+		if (bookId == 0) {
+			cout << "зашли не туда" << endl;
+			bookId++;
+			book.id = bookId;
+		}
+		//Закрываем файл на чтение
+		fclose(readData);
+
+		//записываем id, найденный в файле, в создаваемый обЪект
+		book.id = bookId;
+
+		printf("\n Название книги? ");
+		scanf("%s", book.name);
+
+		//Открываем файл на запись
+		writeData = fopen(fileName, PR_A);
+
+		//записываем в файл созданный объект
+		fwrite(&book, sizeof(book), 1, writeData);
+		fclose(writeData);
+
+		printf("\n Продолжать?[Y/N]");
+		while ((res = getchar()) == '\n');
+	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
+	printf("\n");
+
+	return;
+}
