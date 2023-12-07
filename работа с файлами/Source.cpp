@@ -14,6 +14,9 @@ void AddBook(const char* fileName);
 void AddStudent(const char* fileName);
 void ShowStudents(const char* fileName);
 void ShowBooks(const char* fileName);
+void FindStudent(const char* fileName);
+void FindBook(const char* fileName);
+void GetBook(const char* filenameBooks, const char* filenameStudents);
 
 typedef struct {
 	int id;
@@ -28,10 +31,19 @@ typedef struct {
 
 } books;
 
+typedef struct {
+	int studentId;
+	int bookId;
+	char studentName[255];
+	char studentSurname[255];
+	char bookName[255];
+
+} library;
+
 int main() {
 	setlocale(LC_ALL, "ru");
-	char filenameStudents[40] = FNAME_STUDENTS;
-	char filenameBooks[40] = FNAME_BOOKS;
+	char filenameStudents[255] = FNAME_STUDENTS;
+	char filenameBooks[255] = FNAME_BOOKS;
 	
 	int var = 0;
 
@@ -39,8 +51,9 @@ int main() {
 		printf("  1 - Создание базы данных\n");
 		printf("  2 - Записать в базу данных \n");
 		printf("  3 - Просмотр базы данных \n");
-		printf("  4 - Выдать книгу студенту \n");
-		printf("  5 - Забрать книгу у студента \n");
+		printf("  4 - Найти студента \n");
+		printf("  5 - Найти книгу \n");
+		printf("  6 - Выдать книгу студенту \n");
 		printf("  8 - Выход из программы\n");
 
 		scanf("%i", &var);
@@ -137,20 +150,30 @@ int main() {
 				}
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			/*case 4:
-				if (!fopen(filenameStudents, PR_R)) {
-					printf("\n Ошибка открытия файла для чтения\n");
+			case 4:
+				if (fopen(filenameStudents, PR_R)) {
+					FindStudent(filenameStudents);
 					break;
 				}
-				if (!fopen(filenameResult, PR_W)) {
-					printf("\n Ошибка открытия файла для записи\n");
-					break;
-				}
+
+				printf("\n Ошибка открытия файла для чтения\n");
+				break;
 			case 5:
-				if (!fopen(filenameResult, PR_R)) {
-					printf("\n Ошибка открытия файла для чтения\n");
+				if (fopen(filenameBooks, PR_R)) {
+					FindBook(filenameBooks);
 					break;
-				}*/
+				}
+
+				printf("\n Ошибка открытия файла для чтения\n");
+				break;
+			case 6:
+				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
+					GetBook(filenameStudents, filenameBooks);
+					break;
+				}
+
+				printf("\n Ошибка открытия файла для чтения\n");
+				break;
 
 			case 8: return 0;
 
@@ -274,16 +297,16 @@ void AddBook(const char* fileName) {
 		//Закрываем файл на чтение
 		fclose(readData);
 
-		//записываем id, найденный в файле, в создаваемый обЪект
+		//Id, который нашли в файле, записываем в создаваемый объект
 		book.id = bookId;
 
 		printf("\n Название книги? ");
 		scanf("%s", book.name);
 
-		//Открываем файл на запись
+		//Открыть файл на запись
 		writeData = fopen(fileName, PR_A);
 
-		//записываем в файл созданный объект
+		//Записать в файл созданный объект
 		fwrite(&book, sizeof(book), 1, writeData);
 		fclose(writeData);
 
@@ -293,4 +316,93 @@ void AddBook(const char* fileName) {
 	printf("\n");
 
 	return;
+}
+
+void FindStudent(const char* fileName) {
+	int i = 0;
+	int id = 0;
+	FILE* readData;
+	readData = fopen(fileName, PR_R);
+	students student;
+
+	printf("Введите id студента: ");
+	scanf("%i", &id);
+
+	while (fread(&student, sizeof(student), 1, readData) > 0) {
+		if (id == student.id) {
+			printf("\n|%15s|%15s|", student.name, student.surname);
+		}
+	}
+	printf("\n");
+	for (i = 1; i <= 33; i++)
+		printf("-");
+	printf("\n");
+	fclose(readData);
+
+	return;
+}
+
+void FindBook(const char* fileName) {
+	int i = 0;
+	int id = 0;
+	FILE* readData;
+	readData = fopen(fileName, PR_R);
+	books book;
+
+	printf("Введите id книги: ");
+	scanf("%i", &id);
+
+	while (fread(&book, sizeof(book), 1, readData) > 0) {
+		if (id == book.id) {
+			printf("\n|%15s|", book.name);
+		}
+	}
+	printf("\n");
+	for (i = 1; i <= 17; i++)
+		printf("-");
+	printf("\n");
+	fclose(readData);
+
+	return;
+}
+
+void GetBook(const char* filenameStudents, const char* filenameBooks) {
+	string studentName;
+	string studentSurname;
+	string bookName;
+	int bookId = 0;
+	int studentId = 0;
+	int i = 0;
+
+	FILE* studentsDb;
+	studentsDb = fopen(filenameStudents, PR_R);
+	students student;
+
+	FILE* booksDb;
+	booksDb = fopen(filenameBooks, PR_R);
+	books book;
+
+	printf("Введите id студента: ");
+	scanf("%i", &studentId);
+
+	while (fread(&student, sizeof(student), 1, studentsDb) > 0) {
+		if (studentId == student.id) {
+			studentName = student.name;
+			studentSurname = student.surname;
+			printf("\n|%15s|", studentName.c_str());
+			printf("\n|%15s|", studentSurname.c_str());
+		}
+	}
+
+	printf("Введите id книги: ");
+	scanf("%i", &bookId);
+
+	while (fread(&book, sizeof(book), 1, booksDb) > 0) {
+		if (bookId == book.id) {
+			bookName = book.name;
+			printf("\n|%15s|", bookName.c_str());
+		}
+	}
+	fclose(studentsDb);
+	fclose(booksDb);
 }
