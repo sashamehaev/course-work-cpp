@@ -4,6 +4,7 @@
 #include <stdio.h>
 #define FNAME_STUDENTS "./students.dat"
 #define FNAME_BOOKS "./books.dat"
+#define FNAME_LIBRARY "./library.dat"
 const char PR_R[] = "rb";	//признак открытия бинарного файла на чтение
 const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
 const char PR_W[] = "wb";	//признак открытия файла на запись
@@ -14,9 +15,10 @@ void AddBook(const char* fileName);
 void AddStudent(const char* fileName);
 void ShowStudents(const char* fileName);
 void ShowBooks(const char* fileName);
+void ShowLibrary(const char* fileName);
 void FindStudent(const char* fileName);
 void FindBook(const char* fileName);
-void GetBook(const char* filenameBooks, const char* filenameStudents);
+void GetBook(const char* filenameBooks, const char* filenameStudents, const char* filenameLibrary);
 
 typedef struct {
 	int id;
@@ -44,6 +46,7 @@ int main() {
 	setlocale(LC_ALL, "ru");
 	char filenameStudents[255] = FNAME_STUDENTS;
 	char filenameBooks[255] = FNAME_BOOKS;
+	char filenameLibrary[255] = FNAME_LIBRARY;
 	
 	int var = 0;
 
@@ -95,6 +98,23 @@ int main() {
 					printf("\n Ошибка открытия файла для записи\n");
 					break;
 				}
+
+				if (fopen(filenameLibrary, PR_R)) {
+					printf(" Файл с книгами ");
+					printf(filenameLibrary);
+					printf(" был создан раньше.\n");
+					printf(" Создаём файл с новым именем? [Y/N] ");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
+						printf(" Задайте имя создаваемого файла: ");
+						scanf("%s", filenameLibrary);
+					}
+				}
+
+				if (!fopen(filenameLibrary, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
 		
 				break;
 
@@ -130,7 +150,8 @@ int main() {
 					printf("\n    Выберите таблицу: \n");
 					printf("  1 - Студенты \n");
 					printf("  2 - Книги \n");
-					printf("  3 - Вернуться назад \n");
+					printf("  3 - Библиотека \n");
+					printf("  4 - Вернуться назад \n");
 					printf("  Введите вид действия ->");
 					scanf("%i", &var);
 					if (var == 1) {
@@ -142,6 +163,10 @@ int main() {
 						break;
 					}
 					else if (var == 3) {
+						ShowLibrary(filenameLibrary);
+						break;
+					}
+					else if (var == 4) {
 						break;
 					}
 					else break;
@@ -168,7 +193,7 @@ int main() {
 				break;
 			case 6:
 				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
-					GetBook(filenameStudents, filenameBooks);
+					GetBook(filenameStudents, filenameBooks, filenameLibrary);
 					break;
 				}
 
@@ -188,7 +213,7 @@ void ShowStudents(const char* fileName) {
 	FILE* filenameStudents;
 	filenameStudents = fopen(fileName, PR_R);
 	students student;
-
+	
 	while (fread(&student, sizeof(student), 1, filenameStudents) > 0) {
 		printf("\n|%15s|%15s|%15d|", student.surname, student.name, student.id);
 	}
@@ -214,6 +239,23 @@ void ShowBooks(const char* fileName) {
 		printf("-");
 	printf("\n");
 	fclose(filenameBooks);
+	return;
+}
+
+void ShowLibrary(const char* fileName) {
+	int i = 0;
+	FILE* filenameLibrary;
+	filenameLibrary = fopen(fileName, PR_R);
+	library studentLibrary;
+
+	while (fread(&studentLibrary, sizeof(studentLibrary), 1, filenameLibrary) > 0) {
+		printf("\n|%15d|%15s|%15s|%15d|%15s|", studentLibrary.studentId, studentLibrary.studentName, studentLibrary.studentSurname, studentLibrary.bookId, studentLibrary.bookName);
+	}
+	printf("\n");
+	for (i = 1; i <= 33; i++)
+		printf("-");
+	printf("\n");
+	fclose(filenameLibrary);
 	return;
 }
 
@@ -366,7 +408,7 @@ void FindBook(const char* fileName) {
 	return;
 }
 
-void GetBook(const char* filenameStudents, const char* filenameBooks) {
+void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary) {
 	string studentName;
 	string studentSurname;
 	string bookName;
@@ -382,6 +424,10 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 	booksDb = fopen(filenameBooks, PR_R);
 	books book;
 
+	FILE* libraryDb;
+	libraryDb = fopen(filenameLibrary, PR_A);
+	library studentBooks;
+
 	printf("Введите id студента: ");
 	scanf("%i", &studentId);
 
@@ -389,8 +435,13 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 		if (studentId == student.id) {
 			studentName = student.name;
 			studentSurname = student.surname;
-			printf("\n|%15s|", studentName.c_str());
-			printf("\n|%15s|", studentSurname.c_str());
+			studentBooks.studentId = student.id;
+			studentBooks.studentName = student.name;
+			studentBooks.studentSurname = student.surname;
+			studentBooks.bookId = book.id;
+			studentBooks.bookName = book.name;
+			printf("\n|%15s|", studentName);
+			printf("\n|%15s|", studentSurname);
 		}
 	}
 
@@ -403,6 +454,10 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 			printf("\n|%15s|", bookName.c_str());
 		}
 	}
+
+	fwrite(&studentBooks, sizeof(studentBooks), 1, libraryDb);
+
 	fclose(studentsDb);
 	fclose(booksDb);
+	fclose(libraryDb);
 }
