@@ -1,6 +1,2 @@
 ﻿  Source.cpp
-C:\Users\sasha\source\repos\курсовая\работа с файлами\Source.cpp(439,29): error C3863: тип массива "char [255]" является неназначаемым
-C:\Users\sasha\source\repos\курсовая\работа с файлами\Source.cpp(440,32): error C3863: тип массива "char [255]" является неназначаемым
-C:\Users\sasha\source\repos\курсовая\работа с файлами\Source.cpp(442,26): error C3863: тип массива "char [255]" является неназначаемым
-C:\Users\sasha\source\repos\курсовая\работа с файлами\Source.cpp(443,11): warning C4477: "printf": в строке форматирования "%15s" требуется аргумент типа "char *", но вариативный аргумент "1" имеет тип "std::string"
-C:\Users\sasha\source\repos\курсовая\работа с файлами\Source.cpp(444,11): warning C4477: "printf": в строке форматирования "%15s" требуется аргумент типа "char *", но вариативный аргумент "1" имеет тип "std::string"
+  работа с файлами.vcxproj -> C:\Users\sasha\source\repos\курсовая\x64\Debug\работа с файлами.exe

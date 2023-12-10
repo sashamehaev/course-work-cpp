@@ -18,7 +18,7 @@ void ShowBooks(const char* fileName);
 void ShowLibrary(const char* fileName);
 void FindStudent(const char* fileName);
 void FindBook(const char* fileName);
-void GetBook(const char* filenameBooks, const char* filenameStudents, const char* filenameLibrary);
+void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary);
 
 typedef struct {
 	int id;
@@ -124,7 +124,8 @@ int main() {
 					printf("\n    Выберите таблицу: \n");
 					printf("  1 - Студенты \n");
 					printf("  2 - Книги \n");
-					printf("  3 - Вернуться назад \n");
+					printf("  3 - Выдать книгу \n");
+					printf("  4 - Вернуться назад \n");
 					printf("  Введите вид действия ->");
 					scanf("%i", &var);
 					if (var == 1) {
@@ -136,6 +137,7 @@ int main() {
 						break;
 					}
 					else if (var == 3) {
+						GetBook(filenameStudents, filenameBooks, filenameLibrary);
 						break;
 					}
 					else break;
@@ -409,7 +411,6 @@ void FindBook(const char* fileName) {
 }
 
 void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary) {
-	string studentName;
 	string studentSurname;
 	string bookName;
 	int bookId = 0;
@@ -433,15 +434,9 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 
 	while (fread(&student, sizeof(student), 1, studentsDb) > 0) {
 		if (studentId == student.id) {
-			studentName = student.name;
-			studentSurname = student.surname;
 			studentBooks.studentId = student.id;
-			studentBooks.studentName = student.name;
-			studentBooks.studentSurname = student.surname;
-			studentBooks.bookId = book.id;
-			studentBooks.bookName = book.name;
-			printf("\n|%15s|", studentName);
-			printf("\n|%15s|", studentSurname);
+			memcpy(studentBooks.studentName, student.name, sizeof(student.name));
+			memcpy(studentBooks.studentSurname, student.surname, sizeof(student.surname));
 		}
 	}
 
@@ -450,8 +445,8 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 
 	while (fread(&book, sizeof(book), 1, booksDb) > 0) {
 		if (bookId == book.id) {
-			bookName = book.name;
-			printf("\n|%15s|", bookName.c_str());
+			studentBooks.bookId = book.id;
+			memcpy(studentBooks.bookName, book.name, sizeof(book.name));
 		}
 	}
 
