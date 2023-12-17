@@ -18,6 +18,7 @@ void ShowBooks(const char* fileName);
 void ShowLibrary(const char* fileName);
 void FindStudent(const char* fileName);
 void FindBook(const char* fileName);
+void DeleteBook(const char* fileName);
 void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary);
 
 typedef struct {
@@ -57,6 +58,7 @@ int main() {
 		printf("  4 - Найти студента \n");
 		printf("  5 - Найти книгу \n");
 		printf("  6 - Выдать книгу студенту \n");
+		printf("  7 - Удалить книгу \n");
 		printf("  8 - Выход из программы\n");
 
 		scanf("%i", &var);
@@ -196,6 +198,14 @@ int main() {
 			case 6:
 				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
 					GetBook(filenameStudents, filenameBooks, filenameLibrary);
+					break;
+				}
+
+				printf("\n Ошибка открытия файла для чтения\n");
+				break;
+			case 7:
+				if (fopen(filenameBooks, PR_R)) {
+					DeleteBook(filenameBooks);
 					break;
 				}
 
@@ -455,4 +465,33 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 	fclose(studentsDb);
 	fclose(booksDb);
 	fclose(libraryDb);
+}
+void DeleteBook(const char* fileName) {
+	int i = 0;
+	int id = 0;
+	FILE* readData;
+	readData = fopen(fileName, PR_R);
+	books book;
+	int size = 3;
+	books* arr = new books[size];
+
+	printf("Введите id книги: ");
+	scanf("%i", &id);
+
+	while (fread(&book, sizeof(book), 1, readData) > 0) {
+		arr[i].id = book.id;
+		memcpy(arr[i].name, book.name, sizeof(book.name));
+		//arr[i].name = book.name;
+		i++;
+	}
+
+	for (int j = 0; j < size; j++) {
+		cout << arr[j].id << endl;
+		cout << arr[j].name << endl;
+	}
+
+	delete[] arr;
+	fclose(readData);
+
+	return;
 }
