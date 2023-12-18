@@ -466,31 +466,85 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 	fclose(booksDb);
 	fclose(libraryDb);
 }
+
 void DeleteBook(const char* fileName) {
 	int i = 0;
 	int id = 0;
-	FILE* readData;
-	readData = fopen(fileName, PR_R);
+	FILE* readData = fopen(fileName, PR_R);
 	books book;
-	int size = 3;
+	int size = 4;
 	books* arr = new books[size];
 
-	printf("¬ведите id книги: ");
-	scanf("%i", &id);
+	/*printf("¬ведите id книги: ");
+	scanf("%i", &id);*/
 
 	while (fread(&book, sizeof(book), 1, readData) > 0) {
 		arr[i].id = book.id;
 		memcpy(arr[i].name, book.name, sizeof(book.name));
-		//arr[i].name = book.name;
 		i++;
 	}
+	
 
 	for (int j = 0; j < size; j++) {
 		cout << arr[j].id << endl;
 		cout << arr[j].name << endl;
 	}
 
-	delete[] arr;
+	rewind(readData);
+
+	while (fread(&book, sizeof(book), 1, readData) > 0) {
+		arr[i].id = book.id;
+		memcpy(arr[i].name, book.name, sizeof(book.name));
+		i++;
+	}
+
+	int index = 2;
+
+	
+	size--;
+	books* newArr = new books[size];
+	i = 0;
+
+	/*readData = fopen(fileName, PR_R);
+	while (fread(&book, sizeof(book), 1, readData) > 0) {
+		newArr[i].id = arr[i].id;
+		memcpy(newArr[i].name, book.name, sizeof(book.name));
+		i++;
+
+		if (i == index) {
+			for (int j = index; j < size; j++) {
+				newArr[j].id = arr[j + 1].id;
+				memcpy(newArr[j].name, arr[j + 1].name, sizeof(book.name));
+
+			}
+			break;
+		}
+	}
+	fclose(readData)*/;
+
+	/*for (int i = 0; i < size; i++) {
+		newArr[i].id = arr[i].id;
+		memcpy(newArr[i].name, book.name, sizeof(book.name));
+
+		if (i == index) {
+			for (int j = index; j < size; j++) {
+				newArr[j].id = arr[j + 1].id;
+				memcpy(newArr[j].name, arr[j+1].name, sizeof(book.name));
+
+			}
+			break;
+		}
+	}*/
+
+	/*delete[] arr;
+	arr = newArr;
+
+	for (int j = 0; j < size; j++) {
+		cout << arr[j].id << endl;
+		cout << arr[j].name << endl;
+	}
+
+	delete[] arr;*/
 	fclose(readData);
 
 	return;
