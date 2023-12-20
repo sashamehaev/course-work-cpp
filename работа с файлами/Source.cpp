@@ -1,6 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable:6385)
+#pragma warning(disable:6386)
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <stdio.h>
 #define FNAME_STUDENTS "./students.dat"
 #define FNAME_BOOKS "./books.dat"
@@ -456,7 +459,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 	while (fread(&book, sizeof(book), 1, booksDb) > 0) {
 		if (bookId == book.id) {
 			studentBooks.bookId = book.id;
-			memcpy(studentBooks.bookName, book.name, sizeof(book.name));
+			/*memcpy(studentBooks.bookName, book.name, sizeof(book.name));*/
 		}
 	}
 
@@ -468,43 +471,65 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 }
 
 void DeleteBook(const char* fileName) {
-	int i = 0;
 	int id = 0;
 	FILE* readData = fopen(fileName, PR_R);
 	books book;
-	int size = 4;
-	books* arr = new books[size];
-
-	/*printf("¬ведите id книги: ");
-	scanf("%i", &id);*/
-
+	int size = 0;
 	while (fread(&book, sizeof(book), 1, readData) > 0) {
-		arr[i].id = book.id;
-		memcpy(arr[i].name, book.name, sizeof(book.name));
-		i++;
-	}
-	
-
-	for (int j = 0; j < size; j++) {
-		cout << arr[j].id << endl;
-		cout << arr[j].name << endl;
+		size++;
 	}
 
+	books* arr = new books[size];
 	rewind(readData);
 
-	while (fread(&book, sizeof(book), 1, readData) > 0) {
+	for (int i = 0; fread(&book, sizeof(book), 1, readData) > 0; i++) {
 		arr[i].id = book.id;
 		memcpy(arr[i].name, book.name, sizeof(book.name));
-		i++;
 	}
 
-	int index = 2;
+	for (int i = 0; i < size; i++) {
+		printf("\n|%15d|%15s|", arr[i].id, arr[i].name);
+	}
 
-	
-	size--;
-	books* newArr = new books[size];
-	i = 0;
+	delete[] arr;
 
+	///*printf("¬ведите id книги: ");
+	//scanf("%i", &id);*/
+
+	//while (fread(&book, sizeof(book), 1, readData) > 0) {
+	//	
+	//	arr[i].id = book.id;
+	//	int sizeArr = strlen(arr[i].name);
+	//	//memcpy(arr[i].name, book.name, sizeof(book.name));
+	//	cout << typeid(arr[i].name).name() << endl;
+	//	i++;
+	//}
+
+	//int sizeArr = sizeof(arr);
+	//int sizeStruct = sizeof(books);
+	//int sizeBook = sizeof(book);
+	//int sizeBookName = sizeof(book.name);
+
+
+	//for (int j = 0; j < size; j++) {
+	//	printf("\n|%15d|%15s|", arr[j].id, arr[j].name);
+	//}
+
+	////rewind(readData);
+
+	///*while (fread(&book, sizeof(book), 1, readData) > 0) {
+	//	arr[i].id = book.id;
+	//	memcpy(arr[i].name, book.name, sizeof(book.name));
+	//	i++;
+	//}*/
+
+	//int index = 2;
+	//delete[] arr;
+	//size--;
+	//books* newArr = new books[size];
+	////i = 0;
+
+	//delete[] newArr;
 	/*readData = fopen(fileName, PR_R);
 	while (fread(&book, sizeof(book), 1, readData) > 0) {
 		newArr[i].id = arr[i].id;
