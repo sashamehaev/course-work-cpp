@@ -1,3 +1,2 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppClean.targets(77,5): warning : Отказано в доступе по пути "c:\users\sasha\source\repos\курсовая\x64\debug\работа с файлами.exe".
-  Source.cpp
-LINK : fatal error LNK1104: не удается открыть файл "C:\Users\sasha\source\repos\курсовая\x64\Debug\работа с файлами.exe"
+﻿  Source.cpp
+  работа с файлами.vcxproj -> C:\Users\sasha\source\repos\курсовая\x64\Debug\работа с файлами.exe

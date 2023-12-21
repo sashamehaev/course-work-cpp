@@ -3,16 +3,16 @@
 #pragma warning(disable:6386)
 #include <iostream>
 #include <string>
-#include <cstring>
+#include <cstdio>
 #include <stdio.h>
 #define FNAME_STUDENTS "./students.dat"
 #define FNAME_BOOKS "./books.dat"
 #define FNAME_LIBRARY "./library.dat"
+#define FNAME_BUFF "./buff.dat"
 const char PR_R[] = "rb";	//признак открытия бинарного файла на чтение
 const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
 const char PR_W[] = "wb";	//признак открытия файла на запись
 const char PR_A[] = "ab";	//признак открытия файла на добавление
-using namespace std;
 
 void AddBook(const char* fileName);
 void AddStudent(const char* fileName);
@@ -21,7 +21,7 @@ void ShowBooks(const char* fileName);
 void ShowLibrary(const char* fileName);
 void FindStudent(const char* fileName);
 void FindBook(const char* fileName);
-void DeleteBook(const char* fileName);
+void DeleteBook(const char* fileName, const char* buff);
 void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary);
 
 typedef struct {
@@ -51,6 +51,7 @@ int main() {
 	char filenameStudents[255] = FNAME_STUDENTS;
 	char filenameBooks[255] = FNAME_BOOKS;
 	char filenameLibrary[255] = FNAME_LIBRARY;
+	char filenameBuff[255] = FNAME_BUFF;
 	
 	int var = 0;
 
@@ -208,7 +209,7 @@ int main() {
 				break;
 			case 7:
 				if (fopen(filenameBooks, PR_R)) {
-					DeleteBook(filenameBooks);
+					DeleteBook(filenameBooks, filenameBuff);
 					break;
 				}
 
@@ -288,14 +289,14 @@ void AddStudent(const char* fileName) {
 
 		//пройтись циклом в файле, чтобы найти id последнего объекта
 		while (fread(&student, sizeof(student), 1, readData) > 0) { 
-			cout << "зашли в цикл" << endl;
+			std::cout << "зашли в цикл\n";
 			studentId = student.id;
 			studentId++;
 		}
 
 		//Случай, если файл пустой
 		if (studentId == 0) { 
-			cout << "зашли не туда" << endl;
+			std::cout << "зашли не туда\n";
 			studentId++;
 			student.id = studentId;
 		}
@@ -340,14 +341,14 @@ void AddBook(const char* fileName) {
 
 		//пройтись циклом в файле, чтобы найти id последнего объекта
 		while (fread(&book, sizeof(book), 1, readData) > 0) {
-			cout << "зашли в цикл" << endl;
+			std::cout << "зашли в цикл\n";
 			bookId = book.id;
 			bookId++;
 		}
 
 		//Случай, если файл пустой
 		if (bookId == 0) {
-			cout << "зашли не туда" << endl;
+			std::cout << "зашли не туда\n";
 			bookId++;
 			book.id = bookId;
 		}
@@ -424,8 +425,6 @@ void FindBook(const char* fileName) {
 }
 
 void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary) {
-	string studentSurname;
-	string bookName;
 	int bookId = 0;
 	int studentId = 0;
 	int i = 0;
@@ -470,28 +469,48 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 	fclose(libraryDb);
 }
 
-void DeleteBook(const char* fileName) {
-	int id = 0;
-	FILE* readData = fopen(fileName, PR_R);
+void DeleteBook(const char* fileName, const char* fileNameBuff) {
+	int id = 3;
+	FILE* booksDb = fopen(fileName, PR_R);
+	FILE* writeBuff = fopen(fileNameBuff, PR_W);
 	books book;
-	int size = 0;
-	while (fread(&book, sizeof(book), 1, readData) > 0) {
-		size++;
+
+	while (fread(&book, sizeof(book), 1, booksDb) > 0) {
+		//size++;
+		if (book.id != id) {
+			fwrite(&book, sizeof(book), 1, writeBuff);
+		}
 	}
 
-	books* arr = new books[size];
+	fclose(writeBuff);
+
+	FILE* readBuff = fopen(fileNameBuff, PR_R);
+
+	while (fread(&book, sizeof(book), 1, readBuff) > 0) {
+		printf("\n|%15d|%15s|", book.id, book.name);
+	}
+
+	fclose(readBuff);
+	fclose(booksDb);
+}
+	/*rewind(writeData);*/
+
+	/*fclose(in);
+	fclose(out);*/
+
+	/*books* arr = new books[size];
 	rewind(readData);
 
 	for (int i = 0; fread(&book, sizeof(book), 1, readData) > 0; i++) {
 		arr[i].id = book.id;
 		memcpy(arr[i].name, book.name, sizeof(book.name));
+	}*/
+
+	/*for (int i = 0; i < size; i++) {
+		//printf("\n|%15d|%15s|", arr[i].id, arr[i].name);
 	}
 
-	for (int i = 0; i < size; i++) {
-		printf("\n|%15d|%15s|", arr[i].id, arr[i].name);
-	}
-
-	delete[] arr;
+	delete[] arr;*/
 
 	///*printf("Введите id книги: ");
 	//scanf("%i", &id);*/
@@ -570,7 +589,3 @@ void DeleteBook(const char* fileName) {
 	}
 
 	delete[] arr;*/
-	fclose(readData);
-
-	return;
-}
