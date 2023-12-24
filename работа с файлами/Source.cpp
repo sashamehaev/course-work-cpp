@@ -470,93 +470,33 @@ void GetBook(const char* filenameStudents, const char* filenameBooks, const char
 }
 
 void DeleteBook(const char* fileName, const char* fileNameBuff) {
-	int id = 3;
+	int id = 4;
+	int size = 0;
 	FILE* booksDb = fopen(fileName, PR_R);
-	FILE* writeBuff = fopen(fileNameBuff, PR_W);
+	/*FILE* writeBuff = fopen(fileNameBuff, PR_W);*/
 	books book;
 
+
 	while (fread(&book, sizeof(book), 1, booksDb) > 0) {
-		//size++;
-		if (book.id != id) {
-			fwrite(&book, sizeof(book), 1, writeBuff);
-		}
+		size++;
 	}
+	rewind(booksDb);
 
-	fclose(writeBuff);
+	books* arr = new books[size];
 
-	FILE* readBuff = fopen(fileNameBuff, PR_R);
-
-	while (fread(&book, sizeof(book), 1, readBuff) > 0) {
-		printf("\n|%15d|%15s|", book.id, book.name);
-	}
-
-	fclose(readBuff);
-	fclose(booksDb);
-}
-	/*rewind(writeData);*/
-
-	/*fclose(in);
-	fclose(out);*/
-
-	/*books* arr = new books[size];
-	rewind(readData);
-
-	for (int i = 0; fread(&book, sizeof(book), 1, readData) > 0; i++) {
+	for (int i = 0; fread(&book, sizeof(book), 1, booksDb) > 0; i++) {
 		arr[i].id = book.id;
 		memcpy(arr[i].name, book.name, sizeof(book.name));
-	}*/
-
-	/*for (int i = 0; i < size; i++) {
-		//printf("\n|%15d|%15s|", arr[i].id, arr[i].name);
 	}
 
-	delete[] arr;*/
+	size--;
+	books* newArr = new books[size];
 
-	///*printf("¬ведите id книги: ");
-	//scanf("%i", &id);*/
-
-	//while (fread(&book, sizeof(book), 1, readData) > 0) {
-	//	
-	//	arr[i].id = book.id;
-	//	int sizeArr = strlen(arr[i].name);
-	//	//memcpy(arr[i].name, book.name, sizeof(book.name));
-	//	cout << typeid(arr[i].name).name() << endl;
-	//	i++;
-	//}
-
-	//int sizeArr = sizeof(arr);
-	//int sizeStruct = sizeof(books);
-	//int sizeBook = sizeof(book);
-	//int sizeBookName = sizeof(book.name);
-
-
-	//for (int j = 0; j < size; j++) {
-	//	printf("\n|%15d|%15s|", arr[j].id, arr[j].name);
-	//}
-
-	////rewind(readData);
-
-	///*while (fread(&book, sizeof(book), 1, readData) > 0) {
-	//	arr[i].id = book.id;
-	//	memcpy(arr[i].name, book.name, sizeof(book.name));
-	//	i++;
-	//}*/
-
-	//int index = 2;
-	//delete[] arr;
-	//size--;
-	//books* newArr = new books[size];
-	////i = 0;
-
-	//delete[] newArr;
-	/*readData = fopen(fileName, PR_R);
-	while (fread(&book, sizeof(book), 1, readData) > 0) {
+	for (int i = 0; i < size; i++) {
 		newArr[i].id = arr[i].id;
-		memcpy(newArr[i].name, book.name, sizeof(book.name));
-		i++;
-
-		if (i == index) {
-			for (int j = index; j < size; j++) {
+		memcpy(newArr[i].name, arr[i].name, sizeof(book.name));
+		if (arr[i].id == id) {
+			for (int j = i; j < size; j++) {
 				newArr[j].id = arr[j + 1].id;
 				memcpy(newArr[j].name, arr[j + 1].name, sizeof(book.name));
 
@@ -564,28 +504,18 @@ void DeleteBook(const char* fileName, const char* fileNameBuff) {
 			break;
 		}
 	}
-	fclose(readData)*/;
 
-	/*for (int i = 0; i < size; i++) {
-		newArr[i].id = arr[i].id;
-		memcpy(newArr[i].name, book.name, sizeof(book.name));
-
-		if (i == index) {
-			for (int j = index; j < size; j++) {
-				newArr[j].id = arr[j + 1].id;
-				memcpy(newArr[j].name, arr[j+1].name, sizeof(book.name));
-
-			}
-			break;
-		}
-	}*/
-
-	/*delete[] arr;
+	delete[] arr;
 	arr = newArr;
+	fclose(booksDb);
 
-	for (int j = 0; j < size; j++) {
-		cout << arr[j].id << endl;
-		cout << arr[j].name << endl;
+	booksDb = fopen(fileName, PR_W);
+
+	for (int i = 0; i < size; i++) {
+		fwrite(&arr[i], sizeof(arr[i]), 1, booksDb);
 	}
 
-	delete[] arr;*/
+	fclose(booksDb);
+
+	delete[] arr;
+}
