@@ -436,49 +436,6 @@ void FindBook(const char* fileName) {
 	return;
 }
 
-void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary) {
-	FILE* studentsDb;
-	studentsDb = fopen(filenameStudents, PR_R);
-	students student;
-
-	FILE* booksDb;
-	booksDb = fopen(filenameBooks, PR_R);
-	books book;
-
-	int studentsCount = 0;
-	int booksCount = 0;
-
-	while (fread(&student, sizeof(student), 1, studentsDb)) {
-		studentsCount++;
-	}
-	while (fread(&book, sizeof(book), 1, booksDb)) {
-		booksCount++;
-	}
-	rewind(booksDb);
-	rewind(studentsDb);
-
-	students* studentsArr = new students[studentsCount];
-	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
-		studentsArr[i].id = student.id;
-		student.numberOfBooks;
-		studentsArr[i].numberOfBooks++;
-		memcpy(studentsArr[i].name, student.name, sizeof(student.name));
-		memcpy(studentsArr[i].surname, student.surname, sizeof(student.surname));
-	}
-
-	books* booksArr = new books[booksCount];
-	for (int i = 0; fread(&book, sizeof(book), 1, booksDb) > 0; i++) {
-		booksArr[i].id = book.id;
-		memcpy(booksArr[i].name, book.name, sizeof(book.name));
-	}
-
-	delete[] booksArr;
-	delete[] studentsArr;
-
-	fclose(studentsDb);
-	fclose(booksDb);
-}
-
 void DeleteBook(const char* fileName) {
 	int id = 0;
 	int size = 0;
@@ -602,4 +559,73 @@ void DeleteStudent(const char* fileName) {
 
 	fclose(studentsDb);
 	delete[] arr;
+}
+
+void GetBook(const char* filenameStudents, const char* filenameBooks, const char* filenameLibrary) {
+	FILE* studentsDb;
+	studentsDb = fopen(filenameStudents, PR_R);
+	students student;
+
+	FILE* booksDb;
+	booksDb = fopen(filenameBooks, PR_R);
+	books book;
+
+	int studentsCount = 0;
+	int booksCount = 0;
+
+	while (fread(&student, sizeof(student), 1, studentsDb)) {
+		studentsCount++;
+	}
+	while (fread(&book, sizeof(book), 1, booksDb)) {
+		booksCount++;
+	}
+	rewind(booksDb);
+	rewind(studentsDb);
+
+	books* booksArr = new books[booksCount];
+	for (int i = 0; fread(&book, sizeof(book), 1, booksDb) > 0; i++) {
+		booksArr[i].id = book.id;
+		memcpy(booksArr[i].name, book.name, sizeof(book.name));
+	}
+
+	students* studentsArr = new students[studentsCount];
+	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
+		studentsArr[i].id = student.id;
+		studentsArr[i].numberOfBooks = student.numberOfBooks;
+		memcpy(studentsArr[i].name, student.name, sizeof(student.name));
+		memcpy(studentsArr[i].surname, student.surname, sizeof(student.surname));
+		for (int j = 0; j < student.numberOfBooks; j++) {
+			studentsArr[i].book[j].id = student.book[j].id;
+			memcpy(studentsArr[i].book[j].name, student.book[j].name, sizeof(student.book[j].name));
+		}
+	}
+
+	int studentId = 2;
+	int bookId = 2;
+	for (int i = 0; i < studentsCount; i++) {
+		if (studentId == studentsArr[i].id) {
+			for (int j = 0; j < booksCount; j++) {
+				if (bookId == booksArr[j].id) {
+					int numberOfBooks = 0;
+					numberOfBooks = studentsArr[i].numberOfBooks;
+					studentsArr[i].book[numberOfBooks].id = booksArr[j].id;
+					memcpy(studentsArr[i].book[numberOfBooks].name, booksArr[j].name, sizeof(booksArr[j].name));
+					studentsArr[i].numberOfBooks = studentsArr[i].numberOfBooks + 1;
+				}
+			}
+		}
+	}
+
+	fclose(studentsDb);
+
+	studentsDb = fopen(filenameStudents, PR_W);
+	for (int i = 0; i < studentsCount; i++) {
+		fwrite(&studentsArr[i], sizeof(studentsArr[i]), 1, studentsDb);
+	}
+
+	delete[] booksArr;
+	delete[] studentsArr;
+
+	fclose(studentsDb);
+	fclose(booksDb);
 }
