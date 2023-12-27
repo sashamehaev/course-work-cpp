@@ -495,6 +495,11 @@ void DeleteStudent(const char* fileName) {
 	students* arr = new students[size];
 	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
 		arr[i].id = student.id;
+		arr[i].numberOfBooks = student.numberOfBooks;
+		for (int j = 0; j < student.numberOfBooks; j++) {
+			arr[i].book[j].id = student.book[j].id;
+			memcpy(arr[i].book[j].name, student.book[j].name, sizeof(student.book[j].name));
+		}
 		memcpy(arr[i].name, student.name, sizeof(student.name));
 		memcpy(arr[i].surname, student.surname, sizeof(student.surname));
 	}
@@ -524,11 +529,21 @@ void DeleteStudent(const char* fileName) {
 		newArr[i].id = arr[i].id;
 		memcpy(newArr[i].name, arr[i].name, sizeof(student.name));
 		memcpy(newArr[i].surname, arr[i].surname, sizeof(student.surname));
+		newArr[i].numberOfBooks = arr[i].numberOfBooks;
+		for (int j = 0; j < arr[i].numberOfBooks; j++) {
+			newArr[i].book[j].id = arr[i].book[j].id;
+			memcpy(newArr[i].book[j].name, arr[i].book[j].name, sizeof(arr[i].book[j].name));
+		}
 		if (arr[i].id == id) {
 			for (int j = i; j < size; j++) {
 				newArr[j].id = arr[j + 1].id;
+				newArr[j].numberOfBooks = arr[j + 1].numberOfBooks;
 				memcpy(newArr[j].name, arr[j + 1].name, sizeof(student.name));
 				memcpy(newArr[j].surname, arr[j + 1].surname, sizeof(student.surname));
+				for (int k = 0; k < newArr[j].numberOfBooks; k++) {
+					newArr[j].book[k].id = arr[j + 1].book[k].id;
+					memcpy(newArr[j].book[k].name, arr[j+1].book[k].name, sizeof(arr[j + 1].book[k].name));
+				}
 			}
 			break;
 		}
