@@ -12,14 +12,15 @@ const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
 const char PR_W[] = "wb";	//признак открытия файла на запись
 const char PR_A[] = "ab";	//признак открытия файла на добавление
 
-void AddBook(const char* filenameBooks);
-void AddStudent(const char* filenameStudents);
-void ShowStudents(const char* filenameStudents);
-void ShowBooks(const char* filenameBooks);
-void ShowLibrary(const char* filenameStudents);
-void DeleteBook(const char* filenameBooks);
-void DeleteStudent(const char* filenameStudents);
-void GetBook(const char* filenameStudents, const char* filenameBooks);
+void AddBook (const char* filenameBooks);
+void AddStudent (const char* filenameStudents);
+void ShowStudents (const char* filenameStudents);
+void ShowBooks (const char* filenameBooks);
+void ShowLibrary (const char* filenameStudents);
+void DeleteBook (const char* filenameBooks);
+void DeleteStudent (const char* filenameStudents);
+void GetBook (const char* filenameStudents, const char* filenameBooks);
+//void TakeBook (const char* filenameStudents);
 
 typedef struct {
 	int id;
@@ -47,6 +48,7 @@ int main() {
 		printf("\n  1 - Создание базы данных");
 		printf("\n  2 - Записать в базу данных");
 		printf("\n  3 - Просмотр базы данных");
+		printf("\n  4 - Забрать книгу у студента");
 		printf("\n  6 - Выдать книгу студенту");
 		printf("\n  7 - Удалить книгу");
 		printf("\n  8 - Удалить студента");
@@ -149,8 +151,13 @@ int main() {
 
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			case 4:
-				
+			/*case 4:
+				if (fopen(filenameStudents, PR_R)) {
+					TakeBook(filenameStudents);
+					break;
+				}*/
+
+				printf("\n Ошибка открытия файла для записи\n");
 				break;
 			case 5:
 
@@ -204,12 +211,12 @@ void ShowStudents(const char* filenameStudents) {
 	//Заголовок для таблицы со студентами
 	for (int i = 1; i <= 49; i++)
 		printf("-");
-	printf("\n|%15s|%15s|%15s|\n", "Фамилия", "Имя", "id");
+	printf("\n|%15s|%15s|%15s|\n", "Id", "Имя", "Фамилия");
 	for (int i = 1; i <= 49; i++)
 		printf("-");
 	//Список студентов
 	while (fread(&student, sizeof(student), 1, studentsDb) > 0)
-		printf("\n|%15s|%15s|%15d|", student.surname, student.name, student.id);
+		printf("\n|%15i|%15s|%15s|", student.id, student.name, student.surname);
 	printf("\n");
 	for (int i = 1; i <= 49; i++)
 		printf("-");
@@ -227,12 +234,12 @@ void ShowBooks(const char* filenameBooks) {
 	//Заголовок для таблицы с книгами
 	for (int i = 1; i <= 33; i++)
 		printf("-");
-	printf("\n|%15s|%15s|\n", "name", "id");
+	printf("\n|%15s|%15s|\n", "Id", "Название книги");
 	for (int i = 1; i <= 33; i++)
 		printf("-");
 	//Список книг
 	while (fread(&book, sizeof(book), 1, booksDb) > 0)
-		printf("\n|%15s|%15d|", book.name, book.id);
+		printf("\n|%15i|%15s|", book.id, book.name);
 	printf("\n");
 	for (int i = 1; i <= 33; i++)
 		printf("-");
@@ -410,6 +417,12 @@ void DeleteStudent(const char* filenameStudents) {
 	rewind(studentsDb);
 
 	//Запись студентов из базы в массив
+	/*
+	Необходимо записать 2 массива, потому что, при удалении студента из 
+	середины нужно совершить сдвиг по всему массиву.
+	При работе напрямую с файлом невозможно
+	Для этого необходимо заранее знать общее количество студентов.
+	*/ 
 	students* studentsArr = new students[studentsCount];
 	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
 		studentsArr[i].id = student.id;
@@ -440,9 +453,6 @@ void DeleteStudent(const char* filenameStudents) {
 			printf("Студент не найден\n");
 			return;
 		}
-		else {
-			
-		}
 	}
 
 	//Количество студентов уменьшится на 1 после удаления из базы
@@ -471,7 +481,7 @@ void DeleteStudent(const char* filenameStudents) {
 				memcpy(newStudentsArr[j].surname, studentsArr[j + 1].surname, sizeof(student.surname));
 				for (int k = 0; k < newStudentsArr[j].booksCount; k++) {
 					newStudentsArr[j].book[k].id = studentsArr[j + 1].book[k].id;
-					memcpy(newStudentsArr[j].book[k].name, studentsArr[j+1].book[k].name, sizeof(studentsArr[j + 1].book[k].name));
+					memcpy(newStudentsArr[j].book[k].name, studentsArr[j + 1].book[k].name, sizeof(studentsArr[j + 1].book[k].name));
 				}
 			}
 			break;
@@ -480,7 +490,7 @@ void DeleteStudent(const char* filenameStudents) {
 	delete[] studentsArr;
 	fclose(studentsDb);
 
-	//Очистка файл
+	//Очистка файла
 	studentsDb = fopen(filenameStudents, PR_W);
 	//Запись в файл нового списка студентов
 	for (int i = 0; i < studentsCount; i++)
@@ -638,3 +648,76 @@ void ShowLibrary(const char* filenameStudents) {
 	fclose(studentsDb);
 	return;
 }
+
+//void TakeBook (const char* filenameStudents) {
+//	FILE* studentsDb = fopen(filenameStudents, PR_R);
+//	students student;
+//
+//	int studentsCount = 0;
+//	while (fread(&student, sizeof(student), 1, studentsDb))
+//		studentsCount++;
+//	rewind(studentsDb);
+//
+//	students* studentsArr = new students[studentsCount];
+//	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
+//		studentsArr[i].id = student.id;
+//		memcpy(studentsArr[i].name, student.name, sizeof(student.name));
+//		memcpy(studentsArr[i].surname, student.surname, sizeof(student.surname));
+//		studentsArr[i].booksCount = student.booksCount;
+//		for (int j = 0; j < student.booksCount; j++) {
+//			studentsArr[i].book[j].id = student.book[j].id;
+//			memcpy(studentsArr[i].book[j].name, student.book[j].name, sizeof(student.book[j].name));
+//		}
+//	}
+//
+//	int studentId = 0;
+//	bool studentWasFound = false;
+//	while (!studentWasFound) {
+//		printf("\nВведите id студента: ");
+//		scanf("%i", &studentId);
+//		for (int i = 0; i < studentsCount; i++) {
+//			if (studentsArr[i].id == studentId) {
+//				studentWasFound = true;
+//				break;
+//			}
+//		}
+//		if (!studentWasFound) {
+//			printf("Студент не найден\n");
+//			return;
+//		}
+//	}
+//
+//	int bookId = 0;
+//	bool bookWasFound = false;
+//	while (!bookWasFound) {
+//		printf("\nВведите id книги: ");
+//		scanf("%i", &bookId);
+//		for (int i = 0; i < studentsCount; i++) {
+//			for (int j = 0; j < studentsArr[i].booksCount; j++) {
+//				if (studentsArr[i].book[j].id == bookId) {
+//					bookWasFound = true;
+//					break;
+//				}
+//			}
+//			if (!bookWasFound) {
+//				printf("Книга не найдена\n");
+//				return;
+//			}
+//		}
+//	}
+//
+//	for (int i = 0; i < studentsCount; i++) {
+//		if (studentWasFound) {
+//			if (bookWasFound) {
+//				for (int j = 0; j < studentsArr[i].booksCount; j++) {
+//					studentsArr[i].book[j].id = s
+//				}
+//			}
+//			else break;
+//		}
+//		else break;
+//	}
+//
+//	fclose(studentsDb);
+//	return;
+//}
