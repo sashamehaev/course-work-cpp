@@ -12,15 +12,15 @@ const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
 const char PR_W[] = "wb";	//признак открытия файла на запись
 const char PR_A[] = "ab";	//признак открытия файла на добавление
 
-void AddBook (const char* filenameBooks);
-void AddStudent (const char* filenameStudents);
-void ShowStudents (const char* filenameStudents);
-void ShowBooks (const char* filenameBooks);
-void ShowLibrary (const char* filenameStudents);
-void DeleteBook (const char* filenameBooks);
-void DeleteStudent (const char* filenameStudents);
-void GetBook (const char* filenameStudents, const char* filenameBooks);
-//void TakeBook (const char* filenameStudents);
+void AddBook(const char* filenameBooks);
+void AddStudent(const char* filenameStudents);
+void ShowStudents(const char* filenameStudents);
+void ShowBooks(const char* filenameBooks);
+void ShowLibrary(const char* filenameStudents);
+void DeleteBook(const char* filenameBooks);
+void DeleteStudent(const char* filenameStudents);
+void GetBook(const char* filenameStudents, const char* filenameBooks);
+void TakeBook(const char* filenameStudents);
 
 typedef struct {
 	int id;
@@ -45,66 +45,26 @@ int main() {
 	int var = 0;
 
 	while (true) {
-		printf("\n  1 - Создание базы данных");
-		printf("\n  2 - Записать в базу данных");
-		printf("\n  3 - Просмотр базы данных");
+		printf("\n  1 - Записать в базу данных");
+		printf("\n  2 - Просмотреть базу данных");
+		printf("\n  3 - Удалить из базы данных");
 		printf("\n  4 - Забрать книгу у студента");
 		printf("\n  6 - Выдать книгу студенту");
 		printf("\n  7 - Удалить книгу");
 		printf("\n  8 - Удалить студента");
 		printf("\n  9 - Просмотреть библиотеку");
+		printf("\n  11 - Создание базы данных");
 		printf("\n  12 - Выход из программы\n");
 		printf("\n Введите вид действия:");
 		scanf("%i", &var);
 		switch (var) {
 			case 1:
-				char res;
-
-				//Создаем файлы
-				if (fopen(filenameStudents, PR_R)) {
-					printf(" Файл со студентами ");
-					printf(filenameStudents);
-					printf(" был создан раньше.\n");
-					printf(" Создаём файл с новым именем? [Y/N] ");
-					while ((res = getchar()) == '\n');
-					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
-						printf(" Задайте имя создаваемого файла: ");
-						scanf("%s", filenameStudents);
-					}
-				}
-
-				if (!fopen(filenameStudents, PR_W)) {
-					printf("\n Ошибка открытия файла для записи\n");
-					break;
-				}
-
-				if (fopen(filenameBooks, PR_R)) {
-					printf(" Файл с книгами ");
-					printf(filenameBooks);
-					printf(" был создан раньше.\n");
-					printf(" Создаём файл с новым именем? [Y/N] ");
-					while ((res = getchar()) == '\n');
-					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
-						printf(" Задайте имя создаваемого файла: ");
-						scanf("%s", filenameBooks);
-					}
-				}
-
-				if (!fopen(filenameBooks, PR_W)) {
-					printf("\n Ошибка открытия файла для записи\n");
-					break;
-				}
-		
-				break;
-
-			case 2:
 				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
 					int var = 0;
 					printf("\n    Выберите таблицу: \n");
 					printf("  1 - Студенты \n");
 					printf("  2 - Книги \n");
-					printf("  3 - Выдать книгу \n");
-					printf("  4 - Вернуться назад \n");
+					printf("  3 - Вернуться назад \n");
 					printf("  Введите вид действия ->");
 					scanf("%i", &var);
 					if (var == 1) {
@@ -115,22 +75,18 @@ int main() {
 						AddBook(filenameBooks);
 						break;
 					}
-					else if (var == 3) {
-						break;
-					}
 					else break;
-
-					break;
 				}
+
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			case 3:
+			case 2:
 				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
 					int var = 0;
 					printf("\n    Выберите таблицу: \n");
 					printf("  1 - Студенты \n");
 					printf("  2 - Книги \n");
-					printf("  4 - Вернуться назад \n");
+					printf("  3 - Вернуться назад \n");
 					printf("  Введите вид действия ->");
 					scanf("%i", &var);
 					if (var == 1) {
@@ -141,21 +97,46 @@ int main() {
 						ShowBooks(filenameBooks);
 						break;
 					}
-					else if (var == 4) {
-						break;
-					}
 					else break;
-						
+				}
+
+				printf("\n Ошибка открытия файла для чтения и записи\n");
+				break;
+			case 3:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					int var = 0;
+					bool falseAnswer = false;
+					do {
+						printf("\n\tВыберите таблицу:\n");
+						printf("1 - Студенты\n");
+						printf("2 - Книги\n");
+						printf("3 - Вернуться назад\n");
+						printf("\nВведите вид действия ->");
+						scanf("%i", &var);
+						if (var == 1) {
+							DeleteStudent(filenameStudents);
+							break;
+						}
+						else if (var == 2) {
+							DeleteBook(filenameBooks);
+							break;
+						}
+						else if (var == 3) break;
+						else {
+							printf("\nОшибка! Неверный вариант ответа\n");
+							falseAnswer = true;
+						}
+					} while (falseAnswer);
 					break;
 				}
 
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			/*case 4:
+			case 4:
 				if (fopen(filenameStudents, PR_R)) {
 					TakeBook(filenameStudents);
 					break;
-				}*/
+				}
 
 				printf("\n Ошибка открытия файла для записи\n");
 				break;
@@ -194,7 +175,45 @@ int main() {
 
 				printf("\n Ошибка открытия файла для чтения\n");
 				break;
+			case 11:
+				char res;
 
+				//Создаем файлы
+				if (fopen(filenameStudents, PR_R)) {
+					printf(" Файл со студентами ");
+					printf(filenameStudents);
+					printf(" был создан раньше.\n");
+					printf(" Создаём файл с новым именем? [Y/N] ");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
+						printf(" Задайте имя создаваемого файла: ");
+						scanf("%s", filenameStudents);
+					}
+				}
+
+				if (!fopen(filenameStudents, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
+
+				if (fopen(filenameBooks, PR_R)) {
+					printf(" Файл с книгами ");
+					printf(filenameBooks);
+					printf(" был создан раньше.\n");
+					printf(" Создаём файл с новым именем? [Y/N] ");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
+						printf(" Задайте имя создаваемого файла: ");
+						scanf("%s", filenameBooks);
+					}
+				}
+
+				if (!fopen(filenameBooks, PR_W)) {
+					printf("\n Ошибка открытия файла для записи\n");
+					break;
+				}
+
+				break;
 			case 12: return 0;
 
 			default:
@@ -251,14 +270,12 @@ void ShowBooks(const char* filenameBooks) {
 
 //Записать студента в базу данных
 void AddStudent(const char* filenameStudents) {
-	int i = 0;
-	FILE* studentsDb;
 	students student;
 	
 	char res;
 	do {
 		//Открыть файл на чтение
-		studentsDb = fopen(filenameStudents, PR_R);
+		FILE* studentsDb = fopen(filenameStudents, PR_R);
 
 		//пройтись циклом в файле, чтобы найти id последнего объекта
 		int studentId = 0;
@@ -298,14 +315,12 @@ void AddStudent(const char* filenameStudents) {
 
 //Записать книгу в базу данных
 void AddBook(const char* filenameBooks) {
-	FILE* writeData;
-	FILE* booksDb;
 	books book;
 
 	char res;
 	do {
 		//Открыть файл на чтение
-		booksDb = fopen(filenameBooks, PR_R);
+		FILE* booksDb = fopen(filenameBooks, PR_R);
 
 		//пройтись циклом в файле, чтобы найти id последнего объекта
 		int bookId = 0;
@@ -343,66 +358,71 @@ void AddBook(const char* filenameBooks) {
 
 //Удалить конкретную книгу из базы
 void DeleteBook(const char* fileName) {
-	int booksCount = 0;
-	FILE* booksDb = fopen(fileName, PR_R);
 	books book;
 
-	//Количество книг в базе
-	while (fread(&book, sizeof(book), 1, booksDb) > 0)
-		booksCount++;
-	rewind(booksDb);
+	char res;
+	do {
+		FILE* booksDb = fopen(fileName, PR_R);
+		//Количество книг в базе
+		int booksCount = 0;
+		while (fread(&book, sizeof(book), 1, booksDb) > 0)
+			booksCount++;
+		rewind(booksDb);
 
-	//Запись книг из базы в массив
-	books* booksArr = new books[booksCount];
-	for (int i = 0; fread(&book, sizeof(book), 1, booksDb) > 0; i++) {
-		booksArr[i].id = book.id;
-		memcpy(booksArr[i].name, book.name, sizeof(book.name));
-	}
+		//Запись книг из базы в массив
+		books* booksArr = new books[booksCount];
+		for (int i = 0; fread(&book, sizeof(book), 1, booksDb) > 0; i++) {
+			booksArr[i].id = book.id;
+			memcpy(booksArr[i].name, book.name, sizeof(book.name));
+		}
 
-	int id = 0;
-	bool notFound = true;
-	while (notFound) {
-		printf("\nВведите id книги: ");
-		scanf("%i", &id);
+		int id = 0;
+		bool notFound = true;
+		while (notFound) {
+			printf("\nВведите id книги: ");
+			scanf("%i", &id);
+			for (int i = 0; i < booksCount; i++) {
+				if (booksArr[i].id == id) {
+					notFound = false;
+					break;
+				}
+			}
+			if (notFound) {
+				printf("Книга не найдена\n");
+				return;
+			}
+			else {
+				printf("Книга успешно удалена\n");
+			}
+		}
+
+		//Количество книг после удаления уменьшится на 1
+		booksCount--;
+		//Запись в новый массив книг, кроме подлежащей к удалению
+		books* newBooksArr = new books[booksCount];
 		for (int i = 0; i < booksCount; i++) {
+			newBooksArr[i].id = booksArr[i].id;
+			memcpy(newBooksArr[i].name, booksArr[i].name, sizeof(book.name));
 			if (booksArr[i].id == id) {
-				notFound = false;
+				for (int j = i; j < booksCount; j++) {
+					newBooksArr[j].id = booksArr[j + 1].id;
+					memcpy(newBooksArr[j].name, booksArr[j + 1].name, sizeof(book.name));
+				}
 				break;
 			}
 		}
-		if (notFound) {
-			printf("Книга не найдена\n");
-			return;
-		}
-		else {
-			printf("Книга успешно удалена\n");
-		}
-	}
+		delete[] booksArr;
 
-	//Количество книг после удаления уменьшится на 1
-	booksCount--;
-	//Запись в новый массив книг, кроме подлежащей к удалению
-	books* newBooksArr = new books[booksCount];
-	for (int i = 0; i < booksCount; i++) {
-		newBooksArr[i].id = booksArr[i].id;
-		memcpy(newBooksArr[i].name, booksArr[i].name, sizeof(book.name));
-		if (booksArr[i].id == id) {
-			for (int j = i; j < booksCount; j++) {
-				newBooksArr[j].id = booksArr[j + 1].id;
-				memcpy(newBooksArr[j].name, booksArr[j + 1].name, sizeof(book.name));
-			}
-			break;
-		}
-	}
-	delete[] booksArr;
+		//Очистка файла для записи в него всех книг, кроме подлежащей к удалению
+		booksDb = fopen(fileName, PR_W);
+		for (int i = 0; i < booksCount; i++)
+			fwrite(&newBooksArr[i], sizeof(newBooksArr[i]), 1, booksDb);
 
-	//Очистка файла для записи в него всех книг, кроме подлежащей к удалению
-	booksDb = fopen(fileName, PR_W);
-	for (int i = 0; i < booksCount; i++)
-		fwrite(&newBooksArr[i], sizeof(newBooksArr[i]), 1, booksDb);
-
-	fclose(booksDb);
-	delete[] newBooksArr;
+		delete[] newBooksArr;
+		fclose(booksDb);
+		printf("\n Продолжать?[Y/N]");
+		while ((res = getchar()) == '\n');
+	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
 }
 
 //Удалить конкретного студента из базы
@@ -705,22 +725,18 @@ void TakeBook (const char* filenameStudents) {
 	}
 
 	students* newStudentsArr = new students[studentsCount];
-	int booksCount = 0;
 	for (int i = 0; i < studentsCount; i++) {
-		newStudentsArr[i].id = studentsArr[i].id;
-		//Количество книг у студента уменьшится на 1
-		newStudentsArr[i].booksCount = studentsArr[i].booksCount - 1;
-		memcpy(newStudentsArr[i].name, studentsArr[i].name, sizeof(studentsArr[i].name));
-		memcpy(newStudentsArr[i].surname, studentsArr[i].surname, sizeof(studentsArr[i].surname));
-		for (int j = 0; j < studentsArr[i].booksCount; j++) {
-			newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
-			memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
-		}
-		//Студент найден
-		if (newStudentsArr[i].id == studentId) {
+		//Записываем в новый массив найденного студента
+		if (studentsArr[i].id == studentId) {
+			newStudentsArr[i].id = studentsArr[i].id;
+			//Количество книг у студента уменьшится на 1
+			newStudentsArr[i].booksCount = studentsArr[i].booksCount - 1;
+			memcpy(newStudentsArr[i].name, studentsArr[i].name, sizeof(studentsArr[i].name));
+			memcpy(newStudentsArr[i].surname, studentsArr[i].surname, sizeof(studentsArr[i].surname));
 			for (int j = 0; j < newStudentsArr[i].booksCount; j++) {
 				newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
 				memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
+				//Книга, подлежащая удалению найдена
 				if (studentsArr[i].book[j].id == bookId) {
 					for (int k = j; k < newStudentsArr[i].booksCount; k++) {
 						newStudentsArr[i].book[j].id = studentsArr[i].book[k + 1].id;
@@ -729,6 +745,34 @@ void TakeBook (const char* filenameStudents) {
 				}
 			}
 		}
+		//Записываем в новый массив студентов, кроме найденного
+		else {
+			newStudentsArr[i].id = studentsArr[i].id;
+			newStudentsArr[i].booksCount = studentsArr[i].booksCount;
+			memcpy(newStudentsArr[i].name, studentsArr[i].name, sizeof(studentsArr[i].name));
+			memcpy(newStudentsArr[i].surname, studentsArr[i].surname, sizeof(studentsArr[i].surname));
+			for (int j = 0; j < newStudentsArr[i].booksCount; j++) {
+				newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
+				memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
+			}
+		}
+		/*for (int j = 0; j < studentsArr[i].booksCount; j++) {
+			newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
+			memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
+		}*/
+		////Студент найден
+		//if (newStudentsArr[i].id == studentId) {
+		//	for (int j = 0; j < newStudentsArr[i].booksCount; j++) {
+		//		newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
+		//		memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
+		//		if (studentsArr[i].book[j].id == bookId) {
+		//			for (int k = j; k < newStudentsArr[i].booksCount; k++) {
+		//				newStudentsArr[i].book[j].id = studentsArr[i].book[k + 1].id;
+		//				memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[k + 1].name, sizeof(studentsArr[i].book[k + 1].name));
+		//			}
+		//		}
+		//	}
+		//}
 	}
 
 	delete[] newStudentsArr;
