@@ -49,7 +49,7 @@ int main() {
 		printf("\n  4 - Библиотека");
 		printf("\n  11 - Создание базы данных");
 		printf("\n  12 - Выход из программы\n");
-		printf("\n Введите вид действия:");
+		printf("\n Введите номер действия:");
 		int var = 0;
 		scanf("%i", &var);
 		switch (var) {
@@ -222,7 +222,7 @@ int main() {
 	}
 }
 
-//Вывести студентов из базы
+//Вывести всех студентов в базы
 void ShowStudents(const char* filenameStudents) {
 	FILE* studentsDb = fopen(filenameStudents, PR_R);
 	students student;
@@ -233,6 +233,7 @@ void ShowStudents(const char* filenameStudents) {
 	printf("\n|%15s|%15s|%15s|\n", "Id", "Имя", "Фамилия");
 	for (int i = 1; i <= 49; i++)
 		printf("-");
+
 	//Список студентов
 	while (fread(&student, sizeof(student), 1, studentsDb) > 0)
 		printf("\n|%15i|%15s|%15s|", student.id, student.name, student.surname);
@@ -256,6 +257,7 @@ void ShowBooks(const char* filenameBooks) {
 	printf("\n|%15s|%15s|\n", "Id", "Название книги");
 	for (int i = 1; i <= 33; i++)
 		printf("-");
+
 	//Список книг
 	while (fread(&book, sizeof(book), 1, booksDb) > 0)
 		printf("\n|%15i|%15s|", book.id, book.name);
@@ -277,32 +279,29 @@ void AddStudent(const char* filenameStudents) {
 		//Открыть файл на чтение
 		FILE* studentsDb = fopen(filenameStudents, PR_R);
 
-		//пройтись циклом в файле, чтобы найти id последнего объекта
 		int studentId = 0;
+		//Пройтись циклом в файле, чтобы найти id последнего студента
 		while (fread(&student, sizeof(student), 1, studentsDb) > 0) {
 			studentId = student.id;
 			studentId++;
 		}
 
-		//Случай, если файл пустой
+		//Если в базе еще нет студентов, для первого студента id будет равен 1
 		if (studentId == 0) { 
 			studentId++;
-			student.id = studentId;
 		}
 		fclose(studentsDb);
 
-		//Записать id, найденный в файле, в обЪект
 		student.id = studentId; 
-		
 		printf("\n Имя? ");
 		scanf("%s", student.name);  
-
 		printf("\n Фамилия? ");
 		scanf("%s", student.surname); 
-
-		studentsDb = fopen(filenameStudents, PR_A);
+		//При добавлении студента в базу данных, у него нет книг
 		student.booksCount = 0;
-		//Записать в файл объект
+
+		//Запись студента в базу
+		studentsDb = fopen(filenameStudents, PR_A);
 		fwrite(&student, sizeof(student), 1, studentsDb);
 		fclose(studentsDb);
 
@@ -322,30 +321,24 @@ void AddBook(const char* filenameBooks) {
 		//Открыть файл на чтение
 		FILE* booksDb = fopen(filenameBooks, PR_R);
 
-		//пройтись циклом в файле, чтобы найти id последнего объекта
+		//Пройтись циклом в файле, чтобы найти id последней книги
 		int bookId = 0;
 		while (fread(&book, sizeof(book), 1, booksDb) > 0) {
 			bookId = book.id;
 			bookId++;
 		}
 
-		//Случай, если файл пустой
-		if (bookId == 0) {
+		//Если в базе нет книг, id первой книги равен 1
+		if (bookId == 0)
 			bookId++;
-			book.id = bookId;
-		}
-		//Закрываем файл на чтение
 		fclose(booksDb);
 
-		//Id, который найден в файле, записать в объект
 		book.id = bookId;
-
 		printf("\n Название книги? ");
 		scanf("%s", book.name);
 
-		//Открыть файл на запись
-		booksDb = fopen(filenameBooks, PR_A);
 		//Записать в файл объект
+		booksDb = fopen(filenameBooks, PR_A);
 		fwrite(&book, sizeof(book), 1, booksDb);
 		fclose(booksDb);
 
@@ -377,17 +370,17 @@ void DeleteBook(const char* fileName) {
 		}
 
 		int id = 0;
-		bool notFound = true;
-		while (notFound) {
+		bool bookWasFound = false;
+		while (!bookWasFound) {
 			printf("\nВведите id книги: ");
 			scanf("%i", &id);
 			for (int i = 0; i < booksCount; i++) {
 				if (booksArr[i].id == id) {
-					notFound = false;
+					bookWasFound = true;
 					break;
 				}
 			}
-			if (notFound) {
+			if (!bookWasFound) {
 				printf("Книга не найдена\n");
 				return;
 			}
@@ -423,6 +416,8 @@ void DeleteBook(const char* fileName) {
 		printf("\n Продолжать?[Y/N]");
 		while ((res = getchar()) == '\n');
 	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
+
+	return;
 }
 
 //Удалить конкретного студента из базы
@@ -452,20 +447,20 @@ void DeleteStudent(const char* filenameStudents) {
 				memcpy(studentsArr[i].book[j].name, student.book[j].name, sizeof(student.book[j].name));
 			}
 		}
-
+		
 		int id = 0;
-		bool notFind = true;
-		while (notFind) {
+		bool studentWasFound = false;
+		while (!studentWasFound) {
 			printf("\nВведите id студента: ");
 			scanf("%i", &id);
 			for (int i = 0; i < studentsCount; i++) {
 				if (studentsArr[i].id == id) {
-					notFind = false;
+					studentWasFound = true;
 					printf("Студент успешно удален\n");
 					break;
 				}
 			}
-			if (notFind) {
+			if (!studentWasFound) {
 				printf("Студент не найден\n");
 				return;
 			}
@@ -517,6 +512,8 @@ void DeleteStudent(const char* filenameStudents) {
 		printf("\n Продолжать?[Y/N]");
 		while ((res = getchar()) == '\n');
 	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
+
+	return;
 }
 
 void GetBook(const char* filenameStudents, const char* filenameBooks) {
@@ -562,6 +559,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 			}
 		}
 
+		//Проверка, есть ли студент в базе данных
 		int studentId = 0;
 		bool studentNotFound = true;
 		while (studentNotFound) {
@@ -578,6 +576,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 			}
 		}
 
+		//Проверка, есть ли книга в базе данных
 		int bookId = 0;
 		bool bookNotFound = true;
 		while (bookNotFound) {
@@ -589,21 +588,25 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 					break;
 				}
 			}
-			//Книга не найдена, цикл запускается заново
+			//Книга не найдена, функция запускается заново
 			if (bookNotFound) {
 				printf("Книга не найдена\n");
+				printf("\n Продолжать?[Y/N]");
+				while ((res = getchar()) == '\n');
 			}
-			//Книга найдена, код внутри цикла продолжает работу
+			//Книга найдена, цикл продолжает работу
 			else {
-				//Если у студента нет книг, то выходим из цикла while и продолжаем запись в файл
-				if (studentsArr[studentId - 1].booksCount == 0) {
+				//id начинается с 1, индексация массива с 0
+				int studentIndex = studentId - 1;
+				//Если у студента нет книг, то выходим из цикла и продолжаем запись в файл
+				if (studentsArr[studentIndex].booksCount == 0) {
 					break;
 				}
 
-				//Проверяем, есть ли у студента конкретная книга
-				for (int i = 0; i < studentsArr[studentId - 1].booksCount; i++) {
-					//У студента найдена точно такая же книга, цикл запускается заново
-					if (studentsArr[studentId - 1].book[i].id == bookId) {
+				//Проверка, есть ли у студента конкретная книга
+				for (int i = 0; i < studentsArr[studentIndex].booksCount; i++) {
+					//У студента найдена точно такая же книга, пользователь снова должен ввести id книги
+					if (studentsArr[studentIndex].book[i].id == bookId) {
 						bookNotFound = true;
 						printf("Такая книга уже есть у студента\n");
 						break;
@@ -611,24 +614,6 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 				}
 			}
 		}
-
-		//bool bookAlreadyExist = true;
-		////Выход из цикла при условии, что книга найдена в базе и такой книги нет у студента
-		//while (bookAlreadyExist) {
-		//	printf("\nВведите id книги: ");
-		//	scanf("%i", &bookId);
-		//	if (studentsArr[studentId - 1].booksCount == 0) {
-		//		break;
-		//	}
-
-		//	for (int i = 0; i < studentsArr[studentId - 1].booksCount; i++) {
-		//		if (studentsArr[studentId - 1].book[i].id == bookId) {
-		//			bookAlreadyExist == false;
-		//			printf("Такая книга уже есть у студента\n");
-		//			break;
-		//		}
-		//	}
-		//}
 
 		//Записать в массив найденную книгу для найденного студента
 		for (int i = 0; i < studentsCount; i++) {
@@ -662,6 +647,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 		printf("\n Продолжать?[Y/N]");
 		while ((res = getchar()) == '\n');
 	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
+
 	return;
 }
 
