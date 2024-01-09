@@ -222,7 +222,7 @@ int main() {
 	}
 }
 
-//Вывести всех студентов в базы
+//Вывести всех студентов из базы
 void ShowStudents(const char* filenameStudents) {
 	FILE* studentsDb = fopen(filenameStudents, PR_R);
 	students student;
@@ -300,7 +300,7 @@ void AddStudent(const char* filenameStudents) {
 		//При добавлении студента в базу данных, у него нет книг
 		student.booksCount = 0;
 
-		//Запись студента в базу
+		//Запись студента в базу данных
 		studentsDb = fopen(filenameStudents, PR_A);
 		fwrite(&student, sizeof(student), 1, studentsDb);
 		fclose(studentsDb);
@@ -337,7 +337,7 @@ void AddBook(const char* filenameBooks) {
 		printf("\n Название книги? ");
 		scanf("%s", book.name);
 
-		//Записать в файл книгу
+		//Записать книгу в базу данных
 		booksDb = fopen(filenameBooks, PR_A);
 		fwrite(&book, sizeof(book), 1, booksDb);
 		fclose(booksDb);
@@ -369,6 +369,7 @@ void DeleteBook(const char* fileName) {
 			memcpy(booksArr[i].name, book.name, sizeof(book.name));
 		}
 
+		//Проверка, есть ли книга в базе данных
 		int bookId = 0;
 		bool bookWasFound = false;
 		while (!bookWasFound) {
@@ -394,8 +395,8 @@ void DeleteBook(const char* fileName) {
 		for (int i = 0; i < booksCount; i++) {
 			newBooksArr[i].id = booksArr[i].id;
 			memcpy(newBooksArr[i].name, booksArr[i].name, sizeof(book.name));
-			//После того, как будет найдена нужная книга, необходимо сдвинуть все элементы массива
 			if (booksArr[i].id == bookId) {
+				//После того, как будет найдена нужная книга, необходимо сдвинуть все элементы массива
 				for (int j = i; j < booksCount; j++) {
 					newBooksArr[j].id = booksArr[j + 1].id;
 					memcpy(newBooksArr[j].name, booksArr[j + 1].name, sizeof(book.name));
@@ -447,6 +448,7 @@ void DeleteStudent(const char* filenameStudents) {
 			}
 		}
 		
+		//Проверка, есть ли студент в базе данных
 		int studentId = 0;
 		bool studentWasFound = false;
 		while (!studentWasFound) {
@@ -499,7 +501,7 @@ void DeleteStudent(const char* filenameStudents) {
 		delete[] studentsArr;
 		fclose(studentsDb);
 
-		//Необходимо очистить файл, чтобы записать в него все книги из массива
+		//Необходимо очистить файл, чтобы записать в него всех студентов из массива
 		studentsDb = fopen(filenameStudents, PR_W);
 		for (int i = 0; i < studentsCount; i++)
 			fwrite(&newStudentsArr[i], sizeof(newStudentsArr[i]), 1, studentsDb);		
@@ -601,7 +603,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 					break;
 				}
 
-				//Проверка, есть ли у студента конкретная книга
+				//Проверка, есть ли у студента книга, подлежащая выдаче
 				for (int i = 0; i < studentsArr[studentIndex].booksCount; i++) {
 					if (studentsArr[studentIndex].book[i].id == bookId) {
 						printf("Такая книга уже есть у студента\n");
@@ -617,8 +619,7 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 				for (int j = 0; j < booksCount; j++) {
 					if (bookId == booksArr[j].id) {
 						//Количество книг, принадлежащих конкретному студенту
-						int studentBooksCount = 0;
-						studentBooksCount = studentsArr[i].booksCount;
+						int studentBooksCount = studentsArr[i].booksCount;
 						studentsArr[i].book[studentBooksCount].id = booksArr[j].id;
 						memcpy(studentsArr[i].book[studentBooksCount].name, booksArr[j].name, sizeof(booksArr[j].name));
 						studentsArr[i].booksCount = studentsArr[i].booksCount + 1;
@@ -712,7 +713,7 @@ void TakeBook(const char* filenameStudents) {
 
 		students* newStudentsArr = new students[studentsCount];
 		for (int i = 0; i < studentsCount; i++) {
-			//Записm в новый массив найденного студента
+			//Запись в новый массив найденного студента
 			if (studentsArr[i].id == studentId) {
 				newStudentsArr[i].id = studentsArr[i].id;
 				//Количество книг у студента уменьшится на 1
@@ -722,7 +723,7 @@ void TakeBook(const char* filenameStudents) {
 				for (int j = 0; j < newStudentsArr[i].booksCount; j++) {
 					newStudentsArr[i].book[j].id = studentsArr[i].book[j].id;
 					memcpy(newStudentsArr[i].book[j].name, studentsArr[i].book[j].name, sizeof(studentsArr[i].book[j].name));
-					//Книга, подлежащая удалению найдена
+					//Книга, подлежащая удалению, найдена
 					if (studentsArr[i].book[j].id == bookId) {
 						for (int k = j; k < newStudentsArr[i].booksCount; k++) {
 							newStudentsArr[i].book[j].id = studentsArr[i].book[k + 1].id;
@@ -732,7 +733,8 @@ void TakeBook(const char* filenameStudents) {
 					}
 				}
 			}
-			//Запись в новый массив студентов, кроме найденного
+
+			//Запись в новый массив, кроме найденного студента
 			else {
 				newStudentsArr[i].id = studentsArr[i].id;
 				newStudentsArr[i].booksCount = studentsArr[i].booksCount;
@@ -745,7 +747,7 @@ void TakeBook(const char* filenameStudents) {
 			}
 		}
 
-		//Перезаписать студентов в базу, с учетом того, что была выдана книга конкретному студенту
+		//Перезаписать студентов в базу, с учетом того, что конкретный студент вернул книгу
 		studentsDb = fopen(filenameStudents, PR_W);
 		for (int i = 0; i < studentsCount; i++)
 			fwrite(&newStudentsArr[i], sizeof(newStudentsArr[i]), 1, studentsDb);
@@ -764,9 +766,7 @@ void TakeBook(const char* filenameStudents) {
 
 //Вывести всех студентов и список книг, которые принадлежат каждому студенту
 void ShowLibrary(const char* filenameStudents) {
-	int studentsCount = 0;
-	FILE* studentsDb;
-	studentsDb = fopen(filenameStudents, PR_R);
+	FILE* studentsDb = fopen(filenameStudents, PR_R);
 	students student;
 
 	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
