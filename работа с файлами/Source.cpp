@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable:6031)
 #pragma warning(disable:6385)
 #pragma warning(disable:6386)
 #include <iostream>
@@ -7,10 +8,14 @@
 #include <stdio.h>
 #define FNAME_STUDENTS "./students.dat"
 #define FNAME_BOOKS "./books.dat"
-const char PR_R[] = "rb";	//признак открытия бинарного файла на чтение
-const char PR_S[] = "r+b";	//признак открытия файла на чтение и запись
-const char PR_W[] = "wb";	//признак открытия файла на запись
-const char PR_A[] = "ab";	//признак открытия файла на добавление
+//признак открытия бинарного файла на чтение
+const char PR_R[] = "rb";
+//признак открытия файла на чтение и запись
+const char PR_S[] = "r+b";
+//признак открытия файла на запись
+const char PR_W[] = "wb";
+//признак открытия файла на добавление
+const char PR_A[] = "ab";	
 
 void AddBook(const char* filenameBooks);
 void AddStudent(const char* filenameStudents);
@@ -43,178 +48,163 @@ int main() {
 	char filenameBooks[255] = FNAME_BOOKS;
 	
 	while (true) {
-		printf("\n  1 - Записать в базу данных");
-		printf("\n  2 - Просмотреть базу данных");
-		printf("\n  3 - Удалить из базы данных");
-		printf("\n  4 - Библиотека");
-		printf("\n  11 - Создание базы данных");
-		printf("\n  12 - Выход из программы\n");
+		printf("\n  1 - Создать базу данных");
+		printf("\n  2 - Записать в базу данных");
+		printf("\n  3 - Просмотреть базу данных");
+		printf("\n  4 - Удалить из базы данных");
+		printf("\n  5 - Библиотека");
+		printf("\n  6 - Удалить базу данных");
+		printf("\n  7 - Выход из программы\n");
 		printf("\n Введите номер действия:");
 		int var = 0;
+		char res;
 		scanf("%i", &var);
 		switch (var) {
 			case 1:
+				printf("Создать базу данных? [Y/N]\n");
 				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
-					bool falseAnswer = false;
-					do {
-						printf("\n\tВыберите таблицу:\n");
-						printf("1 - Студенты\n");
-						printf("2 - Книги\n");
-						printf("3 - Вернуться назад\n");
-						printf("\nВведите вид действия ->");
-						int var = 0;
-						scanf("%i", &var);
-						if (var == 1) {
-							AddStudent(filenameStudents);
-							break;
-						}
-						else if (var == 2) {
-							AddBook(filenameBooks);
-							break;
-						}
-						else if (var == 3) break;
-						else {
-							printf("\nОшибка! Неверный вариант ответа\n");
-							falseAnswer = true;
-						}
-					} while (falseAnswer);
+					printf("\nБаза данных уже создана!\n");
 					break;
 				}
-
-				printf("\nОшибка открытия файла для записи\n");
+				while ((res = getchar()) == '\n');
+				if (res == 'Y' || res == 'y') {
+					FILE* studentsDb = fopen(filenameStudents, PR_W);
+					FILE* booksDb = fopen(filenameBooks, PR_W);
+					fclose(studentsDb);
+					fclose(booksDb);
+					printf("\nБаза данных готова к работе\n");
+					break;
+				}
 				break;
 			case 2:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					printf("\n\tВыберите таблицу:\n");
+					printf("1 - Студенты\n");
+					printf("2 - Книги\n");
+					printf("3 - Вернуться назад\n");
+					printf("\nВведите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						AddStudent(filenameStudents);
+						break;
+					}
+					else if (var == 2) {
+						AddBook(filenameBooks);
+						break;
+					}
+					else if (var == 3) break;
+	
+					break;
+				}
+				
+				printf("\nОшибка открытия файла для записи\n");
+				break;
+			case 3:
 				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
-					int var = 0;
-					bool falseAnswer = false;
-					do {
-						printf("\n\tВыберите таблицу:\n");
-						printf("1 - Студенты\n");
-						printf("2 - Книги\n");
-						printf("3 - Вернуться назад\n");
-						printf("\nВведите вид действия ->");
-						scanf("%i", &var);
-						if (var == 1) {
-							ShowStudents(filenameStudents);
-							break;
-						}
-						else if (var == 2) {
-							ShowBooks(filenameBooks);
-							break;
-						}
-						else if (var == 3) break;
-						else {
-							printf("\nОшибка! Неверный вариант ответа\n");
-							falseAnswer = true;
-						}
-					} while (falseAnswer);
+					printf("\n\tВыберите таблицу:\n");
+					printf("1 - Студенты\n");
+					printf("2 - Книги\n");
+					printf("3 - Вернуться назад\n");
+					printf("\nВведите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						ShowStudents(filenameStudents);
+						break;
+					}
+					else if (var == 2) {
+						ShowBooks(filenameBooks);
+						break;
+					}
+					else if (var == 3) break;
+
 					break;
 				}
 
 				printf("\nОшибка открытия файла для чтения\n");
 				break;
-			case 3:
-				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
-					int var = 0;
-					bool falseAnswer = false;
-					do {
-						printf("\n\tВыберите таблицу:\n");
-						printf("1 - Студенты\n");
-						printf("2 - Книги\n");
-						printf("3 - Вернуться назад\n");
-						printf("\nВведите вид действия ->");
-						scanf("%i", &var);
-						if (var == 1) {
-							DeleteStudent(filenameStudents);
-							break;
-						}
-						else if (var == 2) {
-							DeleteBook(filenameBooks);
-							break;
-						}
-						else if (var == 3) break;
-						else {
-							printf("\nОшибка! Неверный вариант ответа\n");
-							falseAnswer = true;
-						}
-					} while (falseAnswer);
-					break;
-				}
-
-				printf("\n Ошибка открытия файла для чтения и записи\n");
-				break;
 			case 4:
 				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
-					int var = 0;
-					bool falseAnswer = false;
-					do {
-						printf("\n\tВыберите действие:\n");
-						printf("1 - Выдать книгу студенту\n");
-						printf("2 - Забрать книгу у студента\n");
-						printf("3 - Просмотреть библиотеку\n");
-						printf("\nВведите вид действия ->");
-						scanf("%i", &var);
-						if (var == 1) {
-							GetBook(filenameStudents, filenameBooks);
-							break;
-						}
-						else if (var == 2) {
-							TakeBook(filenameStudents);
-							break;
-						}
-						else if (var == 3) {
-							ShowLibrary(filenameStudents);
-							break;
-						}	
-						else {
-							printf("\nОшибка! Неверный вариант ответа\n");
-							falseAnswer = true;
-						}
-					} while (falseAnswer);
+					printf("\n\tВыберите таблицу:\n");
+					printf("1 - Удалить студента\n");
+					printf("2 - Удалить книгу\n");
+					printf("3 - Удалить всех студентов\n");
+					printf("4 - Удалить все книги\n");
+					printf("5 - Вернуться назад\n");
+					printf("\nВведите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						DeleteStudent(filenameStudents);
+						break;
+					}
+					else if (var == 2) {
+						DeleteBook(filenameBooks);
+						break;
+					}
+					else if (var == 3) {
+						FILE* studentsDb = fopen(filenameStudents, PR_W);
+						fclose(studentsDb);
+						printf("\nВсе студенты удалены\n");
+						break;
+					}
+					else if (var == 4) {
+						FILE* booksDb = fopen(filenameBooks, PR_W);
+						fclose(booksDb);
+						printf("\nВсе книги удалены\n");
+						break;
+					}
+					else if (var == 5) break;
+						
 					break;
 				}
 
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			case 11:
-				char res;
-				//Создаем файлы
-				if (fopen(filenameStudents, PR_R)) {
-					printf(" Файл со студентами ");
-					printf(filenameStudents);
-					printf(" был создан раньше.\n");
-					printf(" Создаём файл с новым именем? [Y/N] ");
-					while ((res = getchar()) == '\n');
-					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
-						printf(" Задайте имя создаваемого файла: ");
-						scanf("%s", filenameStudents);
+			case 5:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					printf("\n\tВыберите действие:\n");
+					printf("1 - Выдать книгу студенту\n");
+					printf("2 - Забрать книгу у студента\n");
+					printf("3 - Просмотреть библиотеку\n");
+					printf("4 - Вернуться назад\n");
+					printf("\nВведите вид действия ->");
+					scanf("%i", &var);
+					if (var == 1) {
+						GetBook(filenameStudents, filenameBooks);
+						break;
 					}
-				}
+					else if (var == 2) {
+						TakeBook(filenameStudents);
+						break;
+					}
+					else if (var == 3) {
+						ShowLibrary(filenameStudents);
+						break;
+					}
+					else if (var == 4) break;
 
-				if (!fopen(filenameStudents, PR_W)) {
-					printf("\n Ошибка открытия файла для записи\n");
 					break;
 				}
 
-				if (fopen(filenameBooks, PR_R)) {
-					printf(" Файл с книгами ");
-					printf(filenameBooks);
-					printf(" был создан раньше.\n");
-					printf(" Создаём файл с новым именем? [Y/N] ");
-					while ((res = getchar()) == '\n');
-					if (res == 'Y' || res == 'y' || res == 'Н' || res == 'н') {
-						printf(" Задайте имя создаваемого файла: ");
-						scanf("%s", filenameBooks);
-					}
-				}
-
-				if (!fopen(filenameBooks, PR_W)) {
-					printf("\n Ошибка открытия файла для записи\n");
-					break;
-				}
-
+				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			case 12: return 0;
+			case 6:
+				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+					printf("\nВнимание! Все данные будут безвозвратно удалены\n");
+					printf("Продолжить? [Y/N]\n");
+					while ((res = getchar()) == '\n');
+					if (res == 'Y' || res == 'y') {
+						FILE* studentsDb = fopen(filenameStudents, PR_W);
+						FILE* booksDb = fopen(filenameBooks, PR_W);
+						fclose(studentsDb);
+						fclose(booksDb);
+						printf("\nБаза данных удалена\n");
+						break;
+					}
+				}
+				printf("\nОшибка открытия файла\n");
+				break;
+			
+			case 7: return 0;
 
 			default:
 				break;
@@ -378,12 +368,12 @@ void DeleteBook(const char* fileName) {
 			for (int i = 0; i < booksCount; i++) {
 				if (booksArr[i].id == bookId) {
 					bookWasFound = true;
-					printf("Книга успешно удалена\n");
 					break;
 				}
 			}
 			if (!bookWasFound) {
 				printf("Книга не найдена\n");
+				fclose(booksDb);
 				return;
 			}
 		}
@@ -413,6 +403,7 @@ void DeleteBook(const char* fileName) {
 
 		delete[] newBooksArr;
 		fclose(booksDb);
+		printf("Книга успешно удалена\n");
 		printf("\n Продолжать?[Y/N]");
 		while ((res = getchar()) == '\n');
 	} while (res == 'Y' || res == 'y' || res == 'H' || res == 'н');
@@ -462,6 +453,7 @@ void DeleteStudent(const char* filenameStudents) {
 			}
 			if (!studentWasFound) {
 				printf("Студент не найден\n");
+				fclose(studentsDb);
 				return;
 			}
 		}
@@ -526,8 +518,8 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 		FILE* studentsDb = fopen(filenameStudents, PR_R);
 		FILE* booksDb = fopen(filenameBooks, PR_R);
 
-		int studentsCount = 0;
 		//Количество студентов из базы
+		int studentsCount = 0;
 		while (fread(&student, sizeof(student), 1, studentsDb)) {
 			studentsCount++;
 		}
@@ -562,18 +554,20 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 
 		//Проверка, есть ли студент в базе данных
 		int studentId = 0;
-		bool studentNotFound = true;
-		while (studentNotFound) {
+		bool studentWasFound = true;
+		while (!studentWasFound) {
 			printf("\nВведите id студента: ");
 			scanf("%i", &studentId);
 			for (int i = 0; i < studentsCount; i++) {
 				if (studentsArr[i].id == studentId) {
-					studentNotFound = false;
+					studentWasFound = true;
 					break;
 				}
 			}
-			if (studentNotFound) {
+			if (!studentWasFound) {
 				printf("Студент не найден\n");
+				fclose(studentsDb);
+				fclose(booksDb);
 				return;
 			}
 		}
@@ -592,6 +586,8 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 			}
 			if (!bookWasFound) {
 				printf("Книга не найдена в базе\n");
+				fclose(studentsDb);
+				fclose(booksDb);
 				return;
 			}
 			//Книга найдена
@@ -607,6 +603,8 @@ void GetBook(const char* filenameStudents, const char* filenameBooks) {
 				for (int i = 0; i < studentsArr[studentIndex].booksCount; i++) {
 					if (studentsArr[studentIndex].book[i].id == bookId) {
 						printf("Такая книга уже есть у студента\n");
+						fclose(studentsDb);
+						fclose(booksDb);
 						return;
 					}
 				}
@@ -654,7 +652,7 @@ void TakeBook(const char* filenameStudents) {
 	char res;
 	do {
 		FILE* studentsDb = fopen(filenameStudents, PR_R);
-		//Найти количество студентов в базе
+		//Количество студентов в базе
 		int studentsCount = 0;
 		while (fread(&student, sizeof(student), 1, studentsDb))
 			studentsCount++;
@@ -687,6 +685,7 @@ void TakeBook(const char* filenameStudents) {
 			}
 			if (!studentWasFound) {
 				printf("Студент не найден\n");
+				fclose(studentsDb);
 				return;
 			}
 		}
@@ -705,7 +704,8 @@ void TakeBook(const char* filenameStudents) {
 					}
 				}
 				if (!bookWasFound) {
-					printf("Книга не найдена\n");
+					printf("Такой книги нет у студента\n");
+					fclose(studentsDb);
 					return;
 				}
 			}
@@ -769,6 +769,11 @@ void ShowLibrary(const char* filenameStudents) {
 	FILE* studentsDb = fopen(filenameStudents, PR_R);
 	students student;
 
+	if (fread(&student, sizeof(student), 1, studentsDb) == 0) {
+		printf("\nВ базе нет студентов\n");
+		fclose(studentsDb);
+		return;
+	}
 	for (int i = 0; fread(&student, sizeof(student), 1, studentsDb) > 0; i++) {
 		//Заголовок с информацией о студенте
 		printf("\nСтудент: \n");
