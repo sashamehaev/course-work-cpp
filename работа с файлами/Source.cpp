@@ -53,7 +53,7 @@ int main() {
 		printf("\n  3 - Просмотреть базу данных");
 		printf("\n  4 - Удалить из базы данных");
 		printf("\n  5 - Библиотека");
-		printf("\n  6 - Удалить базу данных");
+		printf("\n  6 - Очистить базу данных");
 		printf("\n  7 - Выход из программы\n");
 		printf("\n Введите номер действия:");
 		int var = 0;
@@ -61,11 +61,11 @@ int main() {
 		scanf("%i", &var);
 		switch (var) {
 			case 1:
-				printf("Создать базу данных? [Y/N]\n");
 				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
 					printf("\nБаза данных уже создана!\n");
 					break;
 				}
+				printf("Создать базу данных? [Y/N]\n");
 				while ((res = getchar()) == '\n');
 				if (res == 'Y' || res == 'y') {
 					FILE* studentsDb = fopen(filenameStudents, PR_W);
@@ -76,8 +76,12 @@ int main() {
 					break;
 				}
 				break;
-			case 2:
-				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+			case 2: {
+				FILE* studentsDb = fopen(filenameStudents, PR_R);
+				FILE* booksDb = fopen(filenameBooks, PR_R);
+				if (studentsDb && booksDb) {
+					fclose(studentsDb);
+					fclose(booksDb);
 					printf("\n\tВыберите таблицу:\n");
 					printf("1 - Студенты\n");
 					printf("2 - Книги\n");
@@ -93,12 +97,14 @@ int main() {
 						break;
 					}
 					else if (var == 3) break;
-	
+
 					break;
 				}
-				
+
 				printf("\nОшибка открытия файла для записи\n");
 				break;
+			}
+				
 			case 3:
 				if (fopen(filenameStudents, PR_R) && fopen(filenameBooks, PR_R)) {
 					printf("\n\tВыберите таблицу:\n");
@@ -187,28 +193,29 @@ int main() {
 
 				printf("\n Ошибка открытия файла для чтения и записи\n");
 				break;
-			case 6:
-				if (fopen(filenameStudents, PR_S) && fopen(filenameBooks, PR_S)) {
+			case 6: {
+				/*FILE* studentsDb = fopen(filenameStudents, PR_R);
+				FILE* booksDb = fopen(filenameBooks, PR_R);*/
 					printf("\nВнимание! Все данные будут безвозвратно удалены\n");
 					printf("Продолжить? [Y/N]\n");
 					while ((res = getchar()) == '\n');
 					if (res == 'Y' || res == 'y') {
-						FILE* studentsDb = fopen(filenameStudents, PR_W);
-						FILE* booksDb = fopen(filenameBooks, PR_W);
-						fclose(studentsDb);
-						fclose(booksDb);
-						printf("\nБаза данных удалена\n");
+						remove(filenameStudents);
+						remove(filenameBooks);
+
+						printf("\nБаза данных очищена\n");
 						break;
 					}
-				}
-				printf("\nОшибка открытия файла\n");
-				break;
+					else break;
+			}
+				
 			
 			case 7: return 0;
 
 			default:
 				break;
 		}
+		
 	}
 }
 
