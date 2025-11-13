@@ -18,5 +18,8 @@
     <ClCompile Include="Source.cpp">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Users\sasha\Downloads\sqlite-amalgamation-3430100\sqlite-amalgamation-3430100\sqlite3.c">
+      <Filter>Файлы ресурсов</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
