@@ -1,9 +1,11 @@
 ﻿#include <iostream>
+#include <string>
 #include "sqlite3.h"
 
 void CreateDatabase();
 void CreateBooksTable();
 void AddBook();
+void ShowBooks();
 
 int main() {
     setlocale(LC_ALL, "ru");
@@ -49,7 +51,28 @@ int main() {
             }
         }
         else if (user_choice == 3) {
+            while (true) {
+                std::cout << "\n Выберите таблицу:\n";
+                std::cout << "1 - Студенты\n";
+                std::cout << "2 - Книги\n";
+                std::cout << "3 - Вернуться назад\n";
+                std::cout << "\nВведите вид действия ->\n";
+                std::cin >> user_choice;
+                if (user_choice == 1) {
 
+                    break;
+                }
+                else if (user_choice == 2) {
+                    std::cout << "\nСписок книг:\n" << std::endl;
+                    ShowBooks();
+                    break;
+                }
+                else if (user_choice == 3) {
+
+                    break;
+                }
+                break;
+            }
         }
         else if (user_choice == 4) {
 
@@ -133,7 +156,6 @@ void AddBook() {
     std::cin >> book_author_surname;
     std::string sql = "INSERT INTO books (book_name, book_author_name, book_author_surname) VALUES ('" + book_name + "', '" + book_author_name + "', '" + book_author_surname + "');";
 
-    //Вторым параметром ожидается тип "const char*". С помощью метода c_str() преобразуем string в char
     int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 
     if (rc == SQLITE_OK) {
@@ -146,5 +168,46 @@ void AddBook() {
 
     // Закрываем БД
     sqlite3_close(db);
+    return;
+}
+
+void ShowBooks() {
+    sqlite3* db;
+    int rc;
+    char** result;
+    int rows;
+    int columns;
+    char* errMsg = nullptr;
+
+    if (sqlite3_open("library.sqlite3", &db) != SQLITE_OK) {
+        std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+
+    const char* sql = "SELECT * FROM books;";
+    rc = sqlite3_get_table(db, sql, &result, &rows, &columns, &errMsg);
+
+
+    if (rc == SQLITE_OK) {
+        int j = columns;
+        for (int i = 0; i < rows; i++) {
+            std::cout << "id: " << result[j] << std::endl;
+            j++;
+            std::cout << "Название книги: " << result[j] << std::endl;
+            j++;
+            std::cout << "Имя автора: " << result[j] << std::endl;
+            j++;
+            std::cout << "Фамилия автора: " << result[j] << "\n" << std::endl;
+            j++;
+        }
+    }
+    else {
+        std::cerr << "Ошибка: " << errMsg << std::endl;
+        sqlite3_free(errMsg);
+    }
+
+    sqlite3_free_table(result);
+    sqlite3_close(db);
+
     return;
 }
