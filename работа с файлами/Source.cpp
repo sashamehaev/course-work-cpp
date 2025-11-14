@@ -194,7 +194,7 @@ void CreateBooksTable() {
 void CreateDatabase() {
     const char* db = "library.sqlite";
     std::ifstream file(db);
-    if (file.good() == 1) {
+    if (file.is_open() == 1) {
         std::cout << "База данных уже создана" << std::endl;
         file.close();
         return;
