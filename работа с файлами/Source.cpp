@@ -1,4 +1,8 @@
-﻿#include <iostream>
+﻿//Для запуска необходимо разместить файлы sqlite.c и sqlite.h в директории, 
+//в которой лежит файл Source.cpp
+//Файлы доступны на официальном сайте https://www.sqlite.org в разделе Download
+//в архиве sqlite-amalgamation-3510000.zip
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <cstdio>
@@ -29,126 +33,120 @@ int main() {
         std::cout << "3 - Просмотреть базу данных\n";
         std::cout << "4 - Удалить из базы данных\n";
         std::cout << "5 - Библиотека\n";
-        std::cout << "6 - Очистить базу данных\n";
+        std::cout << "6 - Удалить базу данных\n";
         std::cout << "7 - Выход из программы\n";
         std::cout << "\n Введите номер действия:";
         int user_choice = 0;
         std::cin >> user_choice;
         if (user_choice == 1) {
-            while (true) {
-                CreateDatabase();
-                break;
-            }
+            CreateDatabase();
+            continue;
         }
         else if (user_choice == 2) {
-            while (true) {
-                std::cout << "\n Выберите таблицу:\n";
-                std::cout << "1 - Студенты\n";
-                std::cout << "2 - Книги\n";
-                std::cout << "3 - Вернуться назад\n";
-                std::cout << "\nВведите вид действия ->\n";
-                std::cin >> user_choice;
-                if (user_choice == 1) {
-                    AddStudent();
-                    break;
-                }
-                else if (user_choice == 2) {
-                    AddBook();
-                    break;
-                }
-                else if (user_choice == 3) {
-
-                    break;
-                }
-                break;
+            std::cout << "\n Выберите таблицу:\n";
+            std::cout << "1 - Студенты\n";
+            std::cout << "2 - Книги\n";
+            std::cout << "3 - Вернуться назад\n";
+            std::cout << "\nВведите вид действия ->\n";
+            std::cin >> user_choice;
+            if (user_choice == 1) {
+                AddStudent();
+                continue;
             }
+            else if (user_choice == 2) {
+                AddBook();
+                continue;
+            }
+            else if (user_choice == 3) {
+
+                continue;
+            }
+            continue;
         }
         else if (user_choice == 3) {
-            while (true) {
-                std::cout << "\n Выберите таблицу:\n";
-                std::cout << "1 - Студенты\n";
-                std::cout << "2 - Книги\n";
-                std::cout << "3 - Вернуться назад\n";
-                std::cout << "\nВведите вид действия ->\n";
-                std::cin >> user_choice;
-                if (user_choice == 1) {
-                    std::cout << "\nСписок студентов:\n" << std::endl;
-                    ShowStudents();
-                    break;
-                }
-                else if (user_choice == 2) {
-                    std::cout << "\nСписок книг:\n" << std::endl;
-                    ShowBooks();
-                    break;
-                }
-                else if (user_choice == 3) {
-
-                    break;
-                }
-                break;
+            std::cout << "\n Выберите таблицу:\n";
+            std::cout << "1 - Студенты\n";
+            std::cout << "2 - Книги\n";
+            std::cout << "3 - Вернуться назад\n";
+            std::cout << "\nВведите вид действия ->\n";
+            std::cin >> user_choice;
+            if (user_choice == 1) {
+                std::cout << "\nСписок студентов:\n" << std::endl;
+                ShowStudents();
+                continue;
             }
+            else if (user_choice == 2) {
+                std::cout << "\nСписок книг:\n" << std::endl;
+                ShowBooks();
+                continue;
+            }
+            else if (user_choice == 3) {
+
+                continue;
+            }
+            continue;
         }
         else if (user_choice == 4) {
-            while (true) {
-                std::cout << "\n Выберите таблицу:\n";
-                std::cout << "1 - Студенты\n";
-                std::cout << "2 - Книги\n";
-                std::cout << "3 - Вернуться назад\n";
-                std::cout << "\nВведите вид действия ->\n";
-                std::cin >> user_choice;
-                if (user_choice == 1) {
-                    DeleteStudent();
-                    break;
-                }
-                else if (user_choice == 2) {
-                    DeleteBook();
-                    break;
-                }
-                else if (user_choice == 3) {
-
-                    break;
-                }
-                break;
+            std::cout << "\n Выберите таблицу:\n";
+            std::cout << "1 - Студенты\n";
+            std::cout << "2 - Книги\n";
+            std::cout << "3 - Вернуться назад\n";
+            std::cout << "\nВведите вид действия ->\n";
+            std::cin >> user_choice;
+            if (user_choice == 1) {
+                DeleteStudent();
+                continue;
             }
+            else if (user_choice == 2) {
+                DeleteBook();
+                continue;
+            }
+            else if (user_choice == 3) {
+
+                continue;
+            }
+            continue;
         }
         else if (user_choice == 5) {
-            while (true) {
-                std::cout << "\n Выберите действие:\n";
-                std::cout << "1 - Выдать книгу студенту\n";
-                std::cout << "2 - Забрать книгу у студента\n";
-                std::cout << "3 - Посмотреть, какие книги взял студент\n";
-                std::cout << "4 - Посмотреть всех студентов, которые получили книги\n";
-                std::cout << "5 - Вернуться назад\n";
-                std::cout << "\nВведите вид действия ->\n";
-                std::cin >> user_choice;
-                if (user_choice == 1) {
-                    GetBook();
-                    break;
-                }
-                else if (user_choice == 2) {
-                    TakeBook();
-                    break;
-                }
-                else if (user_choice == 3) {
-                    ShowStudentBooks();
-                    break;
-                }
-                else if (user_choice == 4) {
-                    ShowLibrary();
-                    break;
-                }
-                else if (user_choice == 5) {
-
-                    break;
-                }
-                break;
+            std::cout << "\n Выберите действие:\n";
+            std::cout << "1 - Выдать книгу студенту\n";
+            std::cout << "2 - Забрать книгу у студента\n";
+            std::cout << "3 - Посмотреть, какие книги взял студент\n";
+            std::cout << "4 - Посмотреть всех студентов, которые получили книги\n";
+            std::cout << "5 - Вернуться назад\n";
+            std::cout << "\nВведите вид действия ->\n";
+            std::cin >> user_choice;
+            if (user_choice == 1) {
+                GetBook();
+                continue;
             }
+            else if (user_choice == 2) {
+                TakeBook();
+                continue;
+            }
+            else if (user_choice == 3) {
+                ShowStudentBooks();
+                continue;
+            }
+            else if (user_choice == 4) {
+                ShowLibrary();
+                continue;
+            }
+            else if (user_choice == 5) {
+
+                continue;
+            }
+            continue;
         }
         else if (user_choice == 6) {
-            while (true) {
+            std::string user_input;
+            std::cout << "\nВнимание! Файл БД будет удален. Все сведения о студентах и книгах будут безвозвратно утеряны. Подтвердите ввод?[Y/N]?" << std::endl;
+            std::cin >> user_input;
+            if (user_input == "Y" || user_input == "y") {
                 DropDatabase();
-                break;
+                continue;
             }
+            continue;
         }
         else if (user_choice == 7) {
             return 0;
@@ -202,6 +200,7 @@ void CreateDatabase() {
     CreateBooksTable();
     CreateStudentsTable();
     CreateStudentsBooksTable();
+    std::cout << "База данных library.sqlite готова к работе" << std::endl;
     return;
 };
 
@@ -214,32 +213,42 @@ void AddBook() {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
+    std::string user_input;
+    while (true) {
+        std::string book_name;
+        std::cout << "Введите название книги: ";
+        std::cin >> book_name;
 
-    std::string book_name;
-    std::cout << "Введите название книги: ";
-    std::cin >> book_name;
+        std::string book_author_name;
+        std::cout << "Введите имя автора книги: ";
+        std::cin >> book_author_name;
 
-    std::string book_author_name;
-    std::cout << "Введите имя автора книги: ";
-    std::cin >> book_author_name;
+        std::string book_author_surname;
+        std::cout << "Введите фамилию автора книги: ";
+        std::cin >> book_author_surname;
 
-    std::string book_author_surname;
-    std::cout << "Введите фамилию автора книги: ";
-    std::cin >> book_author_surname;
+        std::string sql =
+            "INSERT INTO books (book_name, book_author_name, book_author_surname) "
+            "VALUES('" + book_name + "', '" + book_author_name + "', '" + book_author_surname + "'); ";
 
-    std::string sql = 
-        "INSERT INTO books (book_name, book_author_name, book_author_surname) "
-        "VALUES('" + book_name + "', '" + book_author_name + "', '" + book_author_surname + "'); ";
+        int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 
-    int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
+        if (rc == SQLITE_OK) {
+            std::cout << "Книга добавлена в библиотеку" << std::endl;
+        }
+        else {
+            std::cerr << "Ошибка SQL: " << errMsg << std::endl;
+            sqlite3_free(errMsg);
+        }
 
-    if (rc == SQLITE_OK) {
-        std::cout << "Запись добавлена успешно!" << std::endl;
+        std::cout << "\nПродолжать?[Y/N]?" << std::endl;
+        std::cin >> user_input;
+        if (user_input == "Y" || user_input == "y") {
+            continue;
+        }
+        break;
     }
-    else {
-        std::cerr << "Ошибка SQL: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-    }
+    
 
     sqlite3_close(db);
     return;
@@ -327,27 +336,36 @@ void AddStudent() {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
+    std::string user_input;
+    while (true) {
+        std::string student_name;
+        std::cout << "Введите имя студента: ";
+        std::cin >> student_name;
 
-    std::string student_name;
-    std::cout << "Введите имя студента: ";
-    std::cin >> student_name;
+        std::string student_surname;
+        std::cout << "Введите фамилию студента: ";
+        std::cin >> student_surname;
 
-    std::string student_surname;
-    std::cout << "Введите фамилию студента: ";
-    std::cin >> student_surname;
+        std::string sql = "INSERT INTO students (student_name, student_surname) VALUES ('" + student_name + "', '" + student_surname + "');";
 
-    std::string sql = "INSERT INTO students (student_name, student_surname) VALUES ('" + student_name + "', '" + student_surname + "');";
+        int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 
-    int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
+        if (rc == SQLITE_OK) {
+            std::cout << "Студент добавлен в БД" << std::endl;
+        }
+        else {
+            std::cerr << "Ошибка SQL: " << errMsg << std::endl;
+            sqlite3_free(errMsg);
+        }
 
-    if (rc == SQLITE_OK) {
-        std::cout << "Запись добавлена успешно!" << std::endl;
+        std::cout << "\nПродолжать?[Y/N]?" << std::endl;
+        std::cin >> user_input;
+        if (user_input=="Y" || user_input=="y") {
+            continue;
+        }
+        break;
     }
-    else {
-        std::cerr << "Ошибка SQL: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-    }
-
+    
     sqlite3_close(db);
     return;
 }
@@ -368,7 +386,6 @@ void ShowStudents() {
 
     const char* sql = "SELECT * FROM students;";
     rc = sqlite3_get_table(db, sql, &result, &rows, &columns, &errMsg);
-
 
     if (rc == SQLITE_OK) {
         int j = columns;
@@ -406,12 +423,35 @@ void DeleteStudent() {
     std::cout << "Введите id студента, которого нужно удалить: ";
     std::cin >> student_id;
 
+    //Проверим есть ли такой студент в БД
+    char** result_student_query_by_id;
+    int rows_student_query_by_id;
+    int columns_student_query_by_id;
+    char* errMsg_student_query_by_id = nullptr;
+    std::string sql_query_student_by_id = "SELECT * FROM students WHERE id = " + student_id + ";";
+    int rc_student_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_student_by_id.c_str(),
+        &result_student_query_by_id,
+        &rows_student_query_by_id,
+        &columns_student_query_by_id,
+        &errMsg_student_query_by_id
+    );
+    sqlite3_free_table(result_student_query_by_id);
+    if (rc_student_query_by_id == SQLITE_OK) {
+        if (rows_student_query_by_id == 0) {
+            std::cout << "Студент с таким id не найден в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
+
     std::string sql = "DELETE FROM students WHERE id = " + student_id + ";";
 
     int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
-
+    
     if (rc == SQLITE_OK) {
-        std::cout << "Запись удалена успешно!" << std::endl;
+        std::cout << "Студент удален из БД" << std::endl;
     }
     else {
         std::cerr << "Ошибка SQL: " << errMsg << std::endl;
@@ -436,12 +476,36 @@ void DeleteBook() {
     std::cout << "Введите id книги, которую нужно удалить: ";
     std::cin >> book_id;
 
+    //Проверим есть ли такая книга в БД
+    int rc_book_query_by_id;
+    char** result_book_query_by_id;
+    int rows_book_query_by_id;
+    int columns_book_query_by_id;
+    char* errMsg_book_query_by_id = nullptr;
+    std::string sql_query_book_by_id = "SELECT * FROM books WHERE id = " + book_id + ";";
+    rc_book_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_book_by_id.c_str(),
+        &result_book_query_by_id,
+        &rows_book_query_by_id,
+        &columns_book_query_by_id,
+        &errMsg_book_query_by_id
+    );
+    sqlite3_free_table(result_book_query_by_id);
+    if (rc_book_query_by_id == SQLITE_OK) {
+        if (rows_book_query_by_id == 0) {
+            std::cout << "Книга с таким id не найдена в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
+
     std::string sql = "DELETE FROM books WHERE id = " + book_id + ";";
 
     int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 
     if (rc == SQLITE_OK) {
-        std::cout << "Запись удалена успешно!" << std::endl;
+        std::cout << "Книга удалена из БД" << std::endl;
     }
     else {
         std::cerr << "Ошибка SQL: " << errMsg << std::endl;
@@ -499,9 +563,56 @@ void GetBook() {
     std::cout << "Введите id студента, который пришел получать книгу: ";
     std::cin >> student_id;
 
+    //Проверим есть ли такой студент в БД
+    char** result_student_query_by_id;
+    int rows_student_query_by_id;
+    int columns_student_query_by_id;
+    char* errMsg_student_query_by_id = nullptr;
+    std::string sql_query_student_by_id = "SELECT * FROM students WHERE id = " + student_id + ";";
+    int rc_student_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_student_by_id.c_str(),
+        &result_student_query_by_id,
+        &rows_student_query_by_id,
+        &columns_student_query_by_id,
+        &errMsg_student_query_by_id
+    );
+    sqlite3_free_table(result_student_query_by_id);
+    if (rc_student_query_by_id == SQLITE_OK) {
+        if (rows_student_query_by_id == 0) {
+            std::cout << "Студент с таким id не найден в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
+
     std::string book_id;
     std::cout << "Введите id книги, которую получит студент: ";
     std::cin >> book_id;
+
+    //Проверим есть ли такая книга в БД
+    int rc_book_query_by_id;
+    char** result_book_query_by_id;
+    int rows_book_query_by_id;
+    int columns_book_query_by_id;
+    char* errMsg_book_query_by_id = nullptr;
+    std::string sql_query_book_by_id = "SELECT * FROM books WHERE id = " + book_id + ";";
+    rc_book_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_book_by_id.c_str(),
+        &result_book_query_by_id,
+        &rows_book_query_by_id,
+        &columns_book_query_by_id,
+        &errMsg_book_query_by_id
+    );
+    sqlite3_free_table(result_book_query_by_id);
+    if (rc_book_query_by_id == SQLITE_OK) {
+        if (rows_book_query_by_id == 0) {
+            std::cout << "Книга с таким id не найдена в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
 
 std::string sql = "INSERT INTO students_books (student_id, book_id) VALUES(" + student_id + ", " + book_id + ");";
 
@@ -533,16 +644,63 @@ void TakeBook() {
     std::cout << "Введите id студента, который пришел возвращать книгу: ";
     std::cin >> student_id;
 
+    //Проверим, есть ли такой студент в БД
+    char** result_student_query_by_id;
+    int rows_student_query_by_id;
+    int columns_student_query_by_id;
+    char* errMsg_student_query_by_id = nullptr;
+    std::string sql_query_student_by_id = "SELECT * FROM students WHERE id = " + student_id + ";";
+    int rc_student_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_student_by_id.c_str(),
+        &result_student_query_by_id,
+        &rows_student_query_by_id,
+        &columns_student_query_by_id,
+        &errMsg_student_query_by_id
+    );
+    sqlite3_free_table(result_student_query_by_id);
+    if (rc_student_query_by_id == SQLITE_OK) {
+        if (rows_student_query_by_id == 0) {
+            std::cout << "Студент с таким id не найден в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
+
     std::string book_id;
     std::cout << "Введите id книги, которую возвращает студент: ";
     std::cin >> book_id;
+
+    //Проверим есть ли такая книга в БД
+    int rc_book_query_by_id;
+    char** result_book_query_by_id;
+    int rows_book_query_by_id;
+    int columns_book_query_by_id;
+    char* errMsg_book_query_by_id = nullptr;
+    std::string sql_query_book_by_id = "SELECT * FROM books WHERE id = " + book_id + ";";
+    rc_book_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_book_by_id.c_str(),
+        &result_book_query_by_id,
+        &rows_book_query_by_id,
+        &columns_book_query_by_id,
+        &errMsg_book_query_by_id
+    );
+    sqlite3_free_table(result_book_query_by_id);
+    if (rc_book_query_by_id == SQLITE_OK) {
+        if (rows_book_query_by_id == 0) {
+            std::cout << "Книга с таким id не найдена в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
 
     std::string sql = "DELETE FROM students_books WHERE student_id = " + student_id + " AND book_id = " + book_id + ";";
 
     int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 
     if (rc == SQLITE_OK) {
-        std::cout << "Запись удалена успешно!" << std::endl;
+        std::cout << "Студент вернул книгу" << std::endl;
     }
     else {
         std::cerr << "Ошибка SQL: " << errMsg << std::endl;
@@ -557,6 +715,7 @@ void TakeBook() {
 void ShowStudentBooks() {
     sqlite3* db;
     int rc;
+    int rc_student_query_by_id;
     char** result;
     int rows;
     int columns;
@@ -569,6 +728,29 @@ void ShowStudentBooks() {
     std::string student_id;
     std::cout << "Введите id студента: ";
     std::cin >> student_id;
+
+    //Проверим, есть ли такой студент в БД
+    char** result_student_query_by_id;
+    int rows_student_query_by_id;
+    int columns_student_query_by_id;
+    char* errMsg_student_query_by_id = nullptr;
+    std::string sql_query_student_by_id = "SELECT * FROM students WHERE id = " + student_id + ";";
+     rc_student_query_by_id = sqlite3_get_table(
+        db,
+        sql_query_student_by_id.c_str(),
+        &result_student_query_by_id,
+        &rows_student_query_by_id,
+        &columns_student_query_by_id,
+        &errMsg_student_query_by_id
+    );
+     sqlite3_free_table(result_student_query_by_id);
+    if (rc_student_query_by_id == SQLITE_OK) {
+        if (rows_student_query_by_id == 0) {
+            std::cout << "Студент с таким id не найден в БД" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
 
     std::string sql =
         "SELECT "
@@ -585,8 +767,13 @@ void ShowStudentBooks() {
 
     rc = sqlite3_get_table(db, sql.c_str(), &result, &rows, &columns, &errMsg);
 
-
     if (rc == SQLITE_OK) {
+        if (rows == 0) {
+            std::cout << "Этот студент не взял ни одной книги" << std::endl;
+            sqlite3_free_table(result);
+            sqlite3_close(db);
+            return;
+        }
         std::cout << "Имя студента: " << result[columns] << std::endl; //значение из колонки student_name
         std::cout << "Фамилия студента: " << result[columns + 1] << std::endl; //значение из колонки student_surname
 
