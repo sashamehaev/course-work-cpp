@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Users\sasha\Downloads\sqlite-amalgamation-3430100\sqlite-amalgamation-3430100\sqlite3.c" />
+    <ClCompile Include="sqlite3.c" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,6 +2,7 @@
 //в которой лежит файл Source.cpp
 //Файлы доступны на официальном сайте https://www.sqlite.org в разделе Download
 //в архиве sqlite-amalgamation-3510000.zip
+//Ссылка на проект в github https://github.com/sashamehaev/course-work-cpp
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -25,6 +26,7 @@ void DropDatabase();
 void ShowLibrary();
 
 int main() {
+    std::cout << "__cplusplus = " << __cplusplus << std::endl;
     setlocale(LC_ALL, "ru");
     
     while (true) {
