@@ -582,7 +582,7 @@ void GetBook() {
     sqlite3_free_table(result_student_query_by_id);
     if (rc_student_query_by_id == SQLITE_OK) {
         if (rows_student_query_by_id == 0) {
-            std::cout << "Студент с таким id не найден в БД" << std::endl;
+            std::cout << "Студент с таким id не найден в базе" << std::endl;
             sqlite3_close(db);
             return;
         }
