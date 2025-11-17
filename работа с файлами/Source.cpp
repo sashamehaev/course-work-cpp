@@ -2,31 +2,31 @@
 //в которой лежит файл Source.cpp
 //Файлы доступны на официальном сайте https://www.sqlite.org в разделе Download
 //в архиве sqlite-amalgamation-3510000.zip
-//Ссылка на проект в github https://github.com/sashamehaev/course-work-cpp
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <cstdio>
 #include "sqlite3.h"
-
-void CreateDatabase();
-void CreateBooksTable();
-void CreateStudentsTable();
-void CreateStudentsBooksTable();
-void AddBook();
-void AddStudent();
-void ShowBooks();
-void ShowStudents();
-void DeleteStudent();
-void DeleteBook();
-void GetBook();
-void TakeBook();
-void ShowStudentBooks();
-void DropDatabase();
-void ShowLibrary();
+#define FNAME_DATABASE "library.sqlite"
+void CreateDatabase(const char* databaseName);
+void CreateBooksTable(const char* databaseName);
+void CreateStudentsTable(const char* databaseName);
+void CreateStudentsBooksTable(const char* databaseName);
+void AddBook(const char* databaseName);
+void AddStudent(const char* databaseName);
+void ShowBooks(const char* databaseName);
+void ShowStudents(const char* databaseName);
+void DeleteStudent(const char* databaseName);
+void DeleteBook(const char* databaseName);
+void GetBook(const char* databaseName);
+void TakeBook(const char* databaseName);
+void ShowStudentBooks(const char* databaseName);
+void DropDatabase(const char* databaseName);
+void ShowLibrary(const char* databaseName);
 
 int main() {
-    std::cout << "__cplusplus = " << __cplusplus << std::endl;
+    //std::cout << "__cplusplus = " << __cplusplus << std::endl;
+    const char* databaseName = FNAME_DATABASE;
     setlocale(LC_ALL, "ru");
     
     while (true) {
@@ -41,7 +41,7 @@ int main() {
         int user_choice = 0;
         std::cin >> user_choice;
         if (user_choice == 1) {
-            CreateDatabase();
+            CreateDatabase(databaseName);
             continue;
         }
         else if (user_choice == 2) {
@@ -52,11 +52,11 @@ int main() {
             std::cout << "\nВведите вид действия ->\n";
             std::cin >> user_choice;
             if (user_choice == 1) {
-                AddStudent();
+                AddStudent(databaseName);
                 continue;
             }
             else if (user_choice == 2) {
-                AddBook();
+                AddBook(databaseName);
                 continue;
             }
             else if (user_choice == 3) {
@@ -74,12 +74,12 @@ int main() {
             std::cin >> user_choice;
             if (user_choice == 1) {
                 std::cout << "\nСписок студентов:\n" << std::endl;
-                ShowStudents();
+                ShowStudents(databaseName);
                 continue;
             }
             else if (user_choice == 2) {
                 std::cout << "\nСписок книг:\n" << std::endl;
-                ShowBooks();
+                ShowBooks(databaseName);
                 continue;
             }
             else if (user_choice == 3) {
@@ -96,11 +96,11 @@ int main() {
             std::cout << "\nВведите вид действия ->\n";
             std::cin >> user_choice;
             if (user_choice == 1) {
-                DeleteStudent();
+                DeleteStudent(databaseName);
                 continue;
             }
             else if (user_choice == 2) {
-                DeleteBook();
+                DeleteBook(databaseName);
                 continue;
             }
             else if (user_choice == 3) {
@@ -119,19 +119,19 @@ int main() {
             std::cout << "\nВведите вид действия ->\n";
             std::cin >> user_choice;
             if (user_choice == 1) {
-                GetBook();
+                GetBook(databaseName);
                 continue;
             }
             else if (user_choice == 2) {
-                TakeBook();
+                TakeBook(databaseName);
                 continue;
             }
             else if (user_choice == 3) {
-                ShowStudentBooks();
+                ShowStudentBooks(databaseName);
                 continue;
             }
             else if (user_choice == 4) {
-                ShowLibrary();
+                ShowLibrary(databaseName);
                 continue;
             }
             else if (user_choice == 5) {
@@ -145,7 +145,7 @@ int main() {
             std::cout << "\nВнимание! Файл БД будет удален. Все сведения о студентах и книгах будут безвозвратно утеряны. Подтвердите ввод?[Y/N]?" << std::endl;
             std::cin >> user_input;
             if (user_input == "Y" || user_input == "y") {
-                DropDatabase();
+                DropDatabase(databaseName);
                 continue;
             }
             continue;
@@ -159,11 +159,11 @@ int main() {
 }
 
 //Создать таблицу "книги"
-void CreateBooksTable() {
+void CreateBooksTable(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -191,27 +191,26 @@ void CreateBooksTable() {
 }
 
 //Создать базу данных
-void CreateDatabase() {
-    const char* db = "library.sqlite";
-    std::ifstream file(db);
+void CreateDatabase(const char* databaseName) {
+    std::ifstream file(databaseName);
     if (file.is_open() == 1) {
         std::cout << "База данных уже создана" << std::endl;
         file.close();
         return;
     }
-    CreateBooksTable();
-    CreateStudentsTable();
-    CreateStudentsBooksTable();
+    CreateBooksTable(databaseName);
+    CreateStudentsTable(databaseName);
+    CreateStudentsBooksTable(databaseName);
     std::cout << "База данных library.sqlite готова к работе" << std::endl;
     return;
 };
 
 //Добавить книгу в таблицу "книги"
-void AddBook() {
+void AddBook(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -251,13 +250,12 @@ void AddBook() {
         break;
     }
     
-
     sqlite3_close(db);
     return;
 }
 
 //Вывести все записи из таблицы "книги"
-void ShowBooks() {
+void ShowBooks(const char* databaseName) {
     sqlite3* db;
     int rc;
     char** result;
@@ -265,7 +263,7 @@ void ShowBooks() {
     int columns;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -294,16 +292,15 @@ void ShowBooks() {
 
     sqlite3_free_table(result);
     sqlite3_close(db);
-
     return;
 }
 
 //Создать таблицу "студенты"
-void CreateStudentsTable() {
+void CreateStudentsTable(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -324,17 +321,16 @@ void CreateStudentsTable() {
         std::cerr << "Ошибка SQL: " << errMsg << std::endl;
         sqlite3_free(errMsg);
     }
-
     sqlite3_close(db);
     return;
 }
 
 //Добавить студента в таблицу "студенты"
-void AddStudent() {
+void AddStudent(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -373,7 +369,7 @@ void AddStudent() {
 }
 
 //Вывести все записи из таблицы "студенты"
-void ShowStudents() {
+void ShowStudents(const char* databaseName) {
     sqlite3* db;
     int rc;
     char** result;
@@ -381,7 +377,7 @@ void ShowStudents() {
     int columns;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -412,11 +408,11 @@ void ShowStudents() {
 }
 
 //Удалить студента по id из таблицы "студенты"
-void DeleteStudent() {
+void DeleteStudent(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -465,11 +461,11 @@ void DeleteStudent() {
 }
 
 //Удалить книгу по id из таблицы "книги"
-void DeleteBook() {
+void DeleteBook(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -519,11 +515,11 @@ void DeleteBook() {
 }
 
 //Создаем промежуточную таблицу, чтобы связать студентов и книги
-void CreateStudentsBooksTable() {
+void CreateStudentsBooksTable(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -552,11 +548,11 @@ void CreateStudentsBooksTable() {
 }
 
 //Выдать книгу студенту
-void GetBook() {
+void GetBook(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -623,6 +619,9 @@ int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
 if (rc == SQLITE_OK) {
     std::cout << "Запись добавлена успешно!" << std::endl;
 }
+else if (rc == SQLITE_CONSTRAINT) {
+    std::cerr << "Ошибка: У студента уже есть эта книга." << std::endl;
+}
 else {
     std::cerr << "Ошибка SQL: " << errMsg << std::endl;
     sqlite3_free(errMsg);
@@ -633,11 +632,11 @@ return;
 }
 
 //Забрать книгу у студента
-void TakeBook() {
+void TakeBook(const char* databaseName) {
     sqlite3* db;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -697,6 +696,29 @@ void TakeBook() {
         }
     }
 
+    //Проверим, есть ли книга у студента
+    char** result_students_books_query;
+    int rows_students_books_query;
+    int columns_students_books_query;
+    char* errMsg_students_books_query = nullptr;
+    std::string sql_students_books_query = "SELECT * FROM students_books WHERE student_id = " + student_id + " AND book_id = " + book_id + ";";
+    int rc_students_books_query = sqlite3_get_table(
+        db,
+        sql_students_books_query.c_str(),
+        &result_students_books_query,
+        &rows_students_books_query,
+        &columns_students_books_query,
+        &errMsg_students_books_query
+    );
+    sqlite3_free_table(result_students_books_query);
+    if (rc_students_books_query == SQLITE_OK) {
+        if (rows_students_books_query == 0) {
+            std::cout << "У студента нет такой книги" << std::endl;
+            sqlite3_close(db);
+            return;
+        }
+    }
+
     std::string sql = "DELETE FROM students_books WHERE student_id = " + student_id + " AND book_id = " + book_id + ";";
 
     int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
@@ -714,7 +736,7 @@ void TakeBook() {
 }
 
 //Посмотреть, какие книги взял студент
-void ShowStudentBooks() {
+void ShowStudentBooks(const char* databaseName) {
     sqlite3* db;
     int rc;
     int rc_student_query_by_id;
@@ -723,7 +745,7 @@ void ShowStudentBooks() {
     int columns;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -801,19 +823,18 @@ void ShowStudentBooks() {
 }
 
 //Удалить файл базы данных
-void DropDatabase() {
-    const char* db = "library.sqlite";
-    if (std::remove(db) == 0) {
-        std::cout << "База данных: " << db << " удалена" << std::endl;
+void DropDatabase(const char* databaseName) {
+    if (std::remove(databaseName) == 0) {
+        std::cout << "База данных: " << databaseName << " удалена" << std::endl;
     }
     else {
-        std::cerr << "Не удалось удалить базу данных: " << db << " .Файл не найден" << std::endl;
+        std::cerr << "Не удалось удалить базу данных: " << databaseName << " .Файл не найден" << std::endl;
     }
     return;
 }
 
 //Посмотреть всех студентов, которые получили книги
-void ShowLibrary() {
+void ShowLibrary(const char* databaseName) {
     sqlite3* db;
     int rc;
     char** result;
@@ -821,7 +842,7 @@ void ShowLibrary() {
     int columns;
     char* errMsg = nullptr;
 
-    if (sqlite3_open("library.sqlite", &db) != SQLITE_OK) {
+    if (sqlite3_open(databaseName, &db) != SQLITE_OK) {
         std::cerr << "Ошибка открытия БД: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
@@ -843,8 +864,6 @@ void ShowLibrary() {
 
 
     if (rc == SQLITE_OK) {
-        std::cout << rows << " строк" << std::endl;
-        std::cout << columns << " колонок" << std::endl;
         int j = columns;
         for (int i = 0; i < rows; i++) {
             std::cout << "id студента: " << result[j] << std::endl;
